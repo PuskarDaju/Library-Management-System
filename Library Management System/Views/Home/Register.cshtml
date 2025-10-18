@@ -1,0 +1,90 @@
+﻿@model Library_Management_System.DTOs.LoginDto
+@{
+    Layout="_AuthLayout";
+    ViewData["Title"] = "Register";
+}
+<div class="login-card">
+    <h3>Library Register</h3>
+    <form id="RegisterForm" class="form-signin">
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input name="username" type="text" class="form-control" placeholder="Enter your username" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input name="email" type="email" class="form-control" placeholder="Enter your email" required/>
+        </div>
+        <span class="text-danger" id="password_validation"></span>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" placeholder="Enter your password" required/>
+        </div>
+        <span class="text-danger" id="password_mismatched"></span>
+        <div class="mb-3">
+            <label class="form-label">Confirm Password</label>
+            <input name="confirm_password" type="password" class="form-control" placeholder="Retype your password" required/>
+        </div>
+       
+        <button type="submit" class="btn btn-primary w-100">Register</button>
+    </form>
+    <p class="mt-3 text-center">Already have an account? <a href="/Home/Login">Login</a></p>
+</div>
+
+
+
+<script>
+    $("#RegisterForm").submit(function(e){
+        e.preventDefault();
+
+        const formData = {
+            FullName: $("input[name='username']").val(),
+            Email: $("input[name='email']").val(),
+            Password: $("input[name='password']").val(),
+            ConfirmPassword: $("input[name='confirm_password']").val(),
+        };
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@@$!%*?&]).{8,}$/;
+        if(!passwordRegex.test(formData.Password)){
+            $("#password_mismatched").text(
+                "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character!"
+            );
+            return;
+        }
+        
+        if(formData.Password !== formData.ConfirmPassword){
+            $("#password_validation").text("Passwords do not match!");
+            return;
+        }
+        $.ajax({
+            url: "/api/auth/register",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if(response.status === "success"){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: response.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = "/Home/Index";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON?.message || "Something went wrong!"
+                });
+            }
+        });
+    });
+</script>

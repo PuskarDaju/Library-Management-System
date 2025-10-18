@@ -1,0 +1,62 @@
+﻿@model Library_Management_System.DTOs.LoginDto
+@{
+    Layout="_AuthLayout";
+    ViewData["Title"] = "Login";
+}
+
+<div class="login-card">
+    <h3>Library Login</h3>
+    <div id="login-message" class="mb-3 text-center"></div>
+    <form id="loginForm" method="post">
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input name="email" type="email" class="form-control" placeholder="Enter your email" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" placeholder="Enter your password" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+    <p class="mt-3 text-center">Don't have an account? <a href="/Home/Register">Register</a></p>
+</div>
+
+<script>
+    $("#loginForm").submit(function(e){
+        e.preventDefault();
+
+        const formData = {
+            email: $("input[name='email']").val(),
+            password: $("input[name='password']").val()
+        };
+
+        $.ajax({
+            url: "/api/auth/login",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if(response.status === "success"){
+                    if(response.role==="Admin"){
+                        window.location.href = "/Admin";
+                    }else if(response.role==="Student"){
+                        window.location.href = "/Student";
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON?.message || "Something went wrong!"
+                });
+            }
+        });
+    });
+</script>

@@ -1,0 +1,31 @@
+﻿
+ body {
+     background: linear-gradient(to right, #4e73df, #1cc88a);
+     height: 100vh;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+ }
+.login-card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+}
+.login-card h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+.btn-primary {
+    background-color: #4e73df;
+    border: none;
+}
+.btn-primary:hover {
+    background-color: #2e59d9;
+}
+a {
+    color: #1cc88a;
+}
