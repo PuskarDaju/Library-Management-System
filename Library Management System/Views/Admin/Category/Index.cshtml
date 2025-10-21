@@ -1,0 +1,110 @@
+﻿@model IEnumerable<Library_Management_System.Models.Category>
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<!-- Container -->
+<div class="container-fluid py-4">
+
+    <!-- Header Row -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Categories</h2>
+        <a href="@Url.Action("Create", "Category")" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-lg"></i> Add Category
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        int index = 1;
+                        foreach (var category in Model)
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@category.Category_Name</td>
+                                    
+                                <td class="text-center">
+                                    <a href="@Url.Action("Edit", "Category", new { id = category.Category_Id })" class="btn btn-sm btn-warning me-1">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteCategory(@category.Category_Id)">
+                                        <i class="bi bi-trash-fill"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No Categories available.</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        function deleteCategory(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result)=>{
+                if(result.isConfirmed){
+                    $.ajax({
+                        url:"/api/Category/Delete/"+id,
+                        method:"DELETE",
+                        success:function(response){
+                            if(response.status==="success"){
+                                Swal.fire(
+                                    "Deleted!",
+                                    response.message,
+                                ).then(()=>{
+                                    window.location.href();
+                                });
+                                
+                            }else{
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: response.message,
+                                });
+                            }
+                            
+                        },
+                        error:function(xhr,status,error){
+                            Swal.fire(
+                                "Error!",
+                                error.messageg || "Something went wrong",
+                                "error"
+                            )
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

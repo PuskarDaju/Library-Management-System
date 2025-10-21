@@ -1,13 +1,12 @@
 using Library_Management_System.Data;
-using Library_Management_System.Services;
+using Library_Management_System.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Services
+builder.Services.AddCustomServices();
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IUserService, UserService>();
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

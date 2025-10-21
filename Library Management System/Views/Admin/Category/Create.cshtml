@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Add Category";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Add New Category</h5>
+                </div>
+                <div class="card-body">
+                    <form id="categoryForm">
+                        <div class="mb-3">
+                            <label for="CategoryName" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="CategoryName" name="Category_Name" placeholder="Enter category name" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Create Category</button>
+                    </form>
+                    <div id="message" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script>
+    const form = document.getElementById('categoryForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const categoryName = document.getElementById('CategoryName').value.trim();
+
+        if (!categoryName) {
+            messageDiv.innerHTML = `<div class="alert alert-danger">Category name cannot be empty</div>`;
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/category/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ Category_Name: categoryName })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                form.reset();
+            } else {
+                messageDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+            }
+        } catch (error) {
+            messageDiv.innerHTML = `<div class="alert alert-danger">Something went wrong. Try again.</div>`;
+        }
+    });
+</script>
+}
