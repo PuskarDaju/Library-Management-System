@@ -15,6 +15,7 @@ public class Book
     public int Category_Id { get; set; }
     public float Price { get; set; }
     public DateOnly? publication_Date { get; set; }
+    public int Quantity { get; set; }
     
     //relations
     //one book belongs to one category

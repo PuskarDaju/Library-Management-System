@@ -3,7 +3,7 @@ using Library_Management_System.Services.Admin.Category;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management_System.ApiControllers.Admin;
-[Route("api/category/[action]/{id?}")]
+[Route("api/category-api/[action]/{id?}")]
 [ApiController]
 public class CategoryApiController(ICategoryService service) : ControllerBase
 {

@@ -1,6 +1,5 @@
 ﻿using Library_Management_System.Data;
 using Library_Management_System.Models;
-using Library_Management_System.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +13,12 @@ public class BookController(ApplicationDbContext dbContext):Controller
        var books = await _dbContext.Books.ToListAsync();
         
         return View($"~/Views/Admin/Book/Index.cshtml",books);
+    }
+
+    public IActionResult Create()
+    {
+        var  categories = _dbContext.Category.ToList();
+        return View("~/Views/Admin/Book/Create.cshtml",categories);
     }
     
 }
