@@ -94,12 +94,13 @@ ViewData["Title"] = "Add Book";
 <script>
     $(document).ready(function () {
 
-        $("#bookForm").on("submit", function (e) {
+        $("#bookForm").on("submit", async(e)=> {
             e.preventDefault();
             let isValid = true;
 
             $("span.text-danger").text("");
-            const category_id=document.getElementById("CategoryId");
+            var category_id=document.getElementById("CategoryId").value;
+            console.log(category_id);
             if(category_id===0||category_id==="") {
                 const err = document.getElementById("CategoryIdError");
                 err.textContent('Category is required');
@@ -112,7 +113,7 @@ ViewData["Title"] = "Add Book";
                 let value = input.val().trim();
                 let errorSpan = $("#" + input.attr("id") + "Error");
 
-                if (input.prop("required") && value === "") {
+                if (input.prop("required") && value === "" || value === null) {
                     errorSpan.text("This field cannot be empty");
                     isValid = false;
                 }
@@ -123,50 +124,49 @@ ViewData["Title"] = "Add Book";
                     text:"This book will be saved in database",
                     showCancelButton: true,
 
-                }).then((result) => {
-                    var formData={
-                        CategoryId:category_id,
-                        BookName:$("#BookName"),
-                        Author: $("#Author"),
-                        Publisher:$("#Publisher"),
-                        ISBN: $("#ISBN"),
-                        Price: $("#Price"),
-                        Quantity: $("#Quantity"),
-                        PublishDate: $('#PublicationDate'),
-                    }
-                    if(result.isConfirmed) {
-                        
-                        $.ajax({
-                            url: "/api/book-api/Create",
-                            type: "POST",
-                            dataType: "json",
-                            data: JSON.stringify(formData),
-                            success: function (result) {
-                                if(result.status === "success") {
-                                    swal.fire({
-                                        icon: "success",
-                                        title: "Success!",
-                                        text: result.message|| "Book Added successfully",
+                }).then(async (result) => {
 
-                                    }).then(()=>{
-                                        window.location.href("/book");
-                                    });
-                                }else if(result.status === "error") {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "Error!",
-                                        text: result.message|| "Something went wrong",
-                                    });
-                                }
-                            },
-                            error: function (xhr, status, error) {
+
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch('/api/book-api/create', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    CategoryId:category_id,
+                                    BookName: $("#BookName").val(),
+                                    Author: $("#Author").val(),
+                                    Publisher: $("#Publisher").val(),
+                                    ISBN: $("#ISBN").val(),
+                                    Price: $("#Price").val(),
+                                    Quantity: $("#Quantity").val(),
+                                    PublishDate: $('#PublicationDate').val()
+                                })
+                            });
+
+                            if (response.ok) {
+                              Swal.fire({
+                                  icon: "success",
+                                  text: "Book has been added successfully",
+                                  showConfirmButton: true,
+                                  timer: 1500,
+                              }).then(()=>{
+                                  window.location.href = "/book";
+                              });
+                            } else {
                                 Swal.fire({
                                     icon: "error",
-                                    title: "Error!",
-                                    text: xhr.responseText|| "something went wrong",
+                                    text: response.message || "Something went wrong",
+                                    showConfirmButton: true,
+                                    timer: 1500,
                                 });
+                              
                             }
-                        });
+                        } catch (error) {
+                            console.log(error);
+                        }
                     }
                 });
 

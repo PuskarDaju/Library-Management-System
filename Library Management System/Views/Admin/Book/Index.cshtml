@@ -21,62 +21,110 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Published</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Published</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            int index = 1;
-                            foreach (var book in Model)
-                            {
-                                <tr>
-                                    <td>@index</td>
-                                    <td>@book.Book_Name</td>
-                                    <td>@book.Author</td>
-                                    <td>
-                                        //here comes the category
-                                    </td>
-                                    <td>
-                                        //here comes the price
-
-                                    </td>
-                                    <td>
-                                        //here comes the published date
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="@Url.Action("Edit", "Book", new { id = book.Book_id })" class="btn btn-sm btn-warning me-1">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                        </a>
-                                        <form asp-action="Delete" asp-route-id="@book.Book_id" method="post" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this book?');">
-                                                <i class="bi bi-trash-fill"></i> Delete
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                index++;
-                            }
-                        }
-                        else
+                    @if (Model != null && Model.Any())
+                    {
+                        int index = 1;
+                        foreach (var book in Model)
                         {
                             <tr>
-                                <td colspan="7" class="text-center text-muted">No books available.</td>
+                                <td>@index</td>
+                                <td>@book.Book_Name</td>
+                                <td>@book.Author</td>
+                                <td>
+                                    @book.Category.Category_Name
+                                </td>
+                                <td>
+                                    @book.Price
+
+                                </td>
+                                <td>
+                                    @book.publication_Date
+                                </td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("Edit", "Book", new { id = book.Book_id })" class="btn btn-sm btn-warning me-1">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                   
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="deleteBook(@book.Book_id)">
+                                            <i class="bi bi-trash-fill"></i> Delete
+                                        </button>
+                                
+                                </td>
                             </tr>
+                            index++;
                         }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No books available.</td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        function deleteBook(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/book-api/Delete/${id}`, {
+                        method: 'DELETE',
+                        dataType: 'json',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify({BookId: $(id)})
+                    }).then(response => {
+                        if (response.ok) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: 'Book has been deleted.',
+                                timer: 1500
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: response.message || 'Something went wrong!',
+                                timer: 1500
+                            });
+                        }
+                    });
+
+
+                }
+            });
+        }
+    </script>
+}
 
 <!-- Bootstrap Icons -->
 

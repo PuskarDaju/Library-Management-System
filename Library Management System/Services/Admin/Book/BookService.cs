@@ -1,5 +1,6 @@
 using Library_Management_System.Data;
 using Library_Management_System.DTOs.Book;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Library_Management_System.Services.Admin.Book;
 
@@ -14,6 +15,7 @@ public class BookService(ApplicationDbContext dbContext):IBookService
         book.Book_Name = createBookDto.BookName;
         book.Quantity = createBookDto.Quantity;
         book.Price = createBookDto.Price;
+        book.Publisher = createBookDto.Publisher;
         if(!string.IsNullOrEmpty(createBookDto.Author))
             book.Author = createBookDto.Author;
         if(!string.IsNullOrEmpty(createBookDto.ISBN))
@@ -31,14 +33,38 @@ public class BookService(ApplicationDbContext dbContext):IBookService
         //throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateBookAsync(UpdateBookDto updateBookDto)
+    public async Task<bool> UpdateBookAsync(UpdateBookDto updateBookDto)
     {
-        throw new NotImplementedException();
+        var book = await _context.Books.FindAsync(updateBookDto.BookId);
+        if (book == null) return false;
+        book.Author = updateBookDto.Author;
+        book.Book_id=updateBookDto.BookId;
+        book.Category_Id = updateBookDto.CategoryId;
+        book.Book_Name = updateBookDto.BookName;
+        book.Quantity = updateBookDto.Quantity;
+        book.Price = updateBookDto.Price;
+        book.Publisher = updateBookDto.Publisher;
+        if(!string.IsNullOrEmpty(updateBookDto.Author))
+            book.Author = updateBookDto.Author;
+        if(!string.IsNullOrEmpty(updateBookDto.ISBN))
+            book.ISBN = updateBookDto.ISBN;
+        if(updateBookDto.PublishDate != null)
+            book.publication_Date = updateBookDto.PublishDate;
+        _context.Books.Update(book);
+       if( await _context.SaveChangesAsync()>0)
+           return true;
+       return false;
     }
 
-    public Task<bool> DeleteBookAsync(int id)
+    public async Task<bool> DeleteBookAsync(int id)
     {
-        throw new NotImplementedException();
+       var book= await _context.Books.FindAsync(id);
+       if (book == null)
+           return false;
+       _context.Books.Remove(book);
+       if(await _context.SaveChangesAsync()>0)
+           return true;
+       return false;
     }
 
     public Task<Models.Book> GetBookAsync(int id)
