@@ -2,6 +2,7 @@
 
 using Library_Management_System.Data;
 using Library_Management_System.DTOs.User;
+using Library_Management_System.Enum;
 using Library_Management_System.Helpers;
 using Library_Management_System.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
             Full_Name = userDto.FullName,
             Email = userDto.Email,
             Password_Hash = hashedPassword,
-            Role = "Student" 
+            Role=UserRoleEnum.User
         };
 
         _context.Users.Add(user);

@@ -1,0 +1,66 @@
+@using Library_Management_System.Enum
+@model IEnumerable<Library_Management_System.Models.User>;
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Categories</h2>
+        <a href="@Url.Action("Create", "Category")" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-lg"></i> Add Category
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model != null)
+                    {
+                        int index = 1;
+                        foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@user.Full_Name</td>
+                                    
+                                <td class="text-center">
+                                    @if (@user.Role == UserRoleEnum.Admin)
+                                    {
+                                        <button> Downgrade to Student</button>
+                                    }
+                                    else
+                                    {
+                                        <button> Upgrade to Admin</button>
+                                    }
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="blackListUser(@user.Id)">
+                                        <i class="bi bi-trash-fill"></i> Blacklist
+                                    </button>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No Categories available.</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

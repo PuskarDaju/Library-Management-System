@@ -1,4 +1,6 @@
 ﻿
+using Library_Management_System.Enum;
+
 namespace Library_Management_System.Models
 {
     public class User
@@ -7,7 +9,7 @@ namespace Library_Management_System.Models
         public string Full_Name { get; set; }
         public string Email { get; set; }
         public string Password_Hash { get; set; }
-        public string Role { get; set; }
+        public UserRoleEnum Role { get; set; }
     
     }
     
