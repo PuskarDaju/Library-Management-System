@@ -5,11 +5,13 @@ using Library_Management_System.Services.Admin.User;
 
 
 namespace Library_Management_System.ApiControllers.Admin;
-[Microsoft.AspNetCore.Components.Route("api/users")]
+[Microsoft.AspNetCore.Components.Route("api/users/")]
 [ApiController]
-public class UserApiController(IUserService userService):ControllerBase
+public class UserApiController(IUserControlService userControlService):ControllerBase
 {
-    private readonly IUserService _userService=userService;
+    private readonly IUserControlService _userControlService=userControlService;
+    
+    [HttpPost("upgrade/{id}")]
     public async Task<IActionResult> UpgradeToAdmin(int id)
     {
         if (id == null)
@@ -20,7 +22,7 @@ public class UserApiController(IUserService userService):ControllerBase
             });
         try
         {
-            if (await _userService.UpgradeToAdmin(id))
+            if (await _userControlService.UpgradeToAdmin(id))
                 return Ok(new
                 {
                     status = "success",
@@ -43,6 +45,7 @@ public class UserApiController(IUserService userService):ControllerBase
         }
     }
 
+    [HttpPost("downgrade/{id}")]
     public async Task<IActionResult> DowngradeToStudent(int id)
     {
         if (id==null||id<1)
@@ -53,7 +56,7 @@ public class UserApiController(IUserService userService):ControllerBase
             });
         try
         {
-            if (await _userService.DowngradeToStudent(id))
+            if (await _userControlService.DowngradeToStudent(id))
                 return Ok(new
                 {
                     status = "success",
@@ -75,6 +78,7 @@ public class UserApiController(IUserService userService):ControllerBase
             );
         }
     }
+    [HttpPost("blacklist/{id}")]
 
     public async Task<IActionResult> BlackListUser(int id)
     {
@@ -86,7 +90,7 @@ public class UserApiController(IUserService userService):ControllerBase
             });
         try
         {
-            if (await _userService.BlackList(id))
+            if (await _userControlService.BlackList(id))
                 return Ok(new
                 {
                     status = "success",

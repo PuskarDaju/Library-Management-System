@@ -1,4 +1,4 @@
-@using Library_Management_System.Enum
+
 @model IEnumerable<Library_Management_System.Models.User>;
 @{
     ViewData["Title"] = "Users";
@@ -13,7 +13,6 @@
         </a>
     </div>
 
-    <!-- Table -->
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
@@ -36,7 +35,7 @@
                                 <td>@user.Full_Name</td>
                                     
                                 <td class="text-center">
-                                    @if (@user.Role == UserRoleEnum.Admin)
+                                    @if (@user.Role == "Admin")
                                     {
                                         <button> Downgrade to Student</button>
                                     }

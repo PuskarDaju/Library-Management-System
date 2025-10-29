@@ -4,14 +4,14 @@ using Library_Management_System.Services.Admin.Exception;
 
 namespace Library_Management_System.Services.Admin.User;
 
-public class UserService(ApplicationDbContext context):IUserService
+public class UserControlService(ApplicationDbContext context):IUserControlService
 {
  private readonly ApplicationDbContext _context=context;
     public async Task<bool> UpgradeToAdmin(int id)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null) throw new UserNotFoundException(id);
-        user.Role = UserRoleEnum.Admin;
+        user.Role = "Admin";
         _context.Users.Update(user);
         if (await _context.SaveChangesAsync()>0)
         {
@@ -24,7 +24,7 @@ public class UserService(ApplicationDbContext context):IUserService
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null) throw new UserNotFoundException(id);
-        user.Role = UserRoleEnum.User;
+        user.Role = UserRoleEnum.Student;
         _context.Users.Update(user);
         if (await _context.SaveChangesAsync()>0)
         {
@@ -37,7 +37,7 @@ public class UserService(ApplicationDbContext context):IUserService
     {
          var user = await _context.Users.FindAsync(id);
         if (user == null) throw new UserNotFoundException(id);
-        user.Role = UserRoleEnum.Blacklist;
+        user.Role ="Blacklist";
         _context.Users.Update(user);
         if (await _context.SaveChangesAsync()>0)
         {

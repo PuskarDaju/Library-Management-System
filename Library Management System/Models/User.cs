@@ -9,7 +9,7 @@ namespace Library_Management_System.Models
         public string Full_Name { get; set; }
         public string Email { get; set; }
         public string Password_Hash { get; set; }
-        public UserRoleEnum Role { get; set; }
+        public String Role { get; set; }
     
     }
     

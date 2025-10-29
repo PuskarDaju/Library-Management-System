@@ -1,8 +1,9 @@
 namespace Library_Management_System.Enum;
 
-public enum UserRoleEnum
+public static class UserRoleEnum
 {
-    Admin,
-    User,
-    Blacklist
+    public const string Admin = "Admin";
+    public const string Student = "Student";
+    public const string Blacklist = "Blacklist";
+    
 }

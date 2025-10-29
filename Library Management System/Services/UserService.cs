@@ -23,7 +23,7 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
             Full_Name = userDto.FullName,
             Email = userDto.Email,
             Password_Hash = hashedPassword,
-            Role=UserRoleEnum.User
+            Role=UserRoleEnum.Student
         };
 
         _context.Users.Add(user);
