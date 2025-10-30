@@ -48,6 +48,10 @@ namespace Library_Management_System.Migrations
                     b.Property<string>("Image_Url")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Photo_Path")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<float>("Price")
                         .HasColumnType("float");
 

@@ -12,6 +12,6 @@ public static class ServiceExtensions
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IBookService, BookService>();
-        // services.AddScoped<IUserControlService,UserControlService>();
+         services.AddScoped<IUserControlService,UserControlService>();
     }
 }

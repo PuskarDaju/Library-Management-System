@@ -44,7 +44,41 @@ public class BookApiController(IBookService service) :ControllerBase {
                 status = "error",
                 message = "select a valid category",
             });
-
+        if (dto.Image == null)
+            return BadRequest(new
+            {
+                status = "error",
+                message = "Image is Required"
+            });
+        
+        var validExtension = new List<string> { ".jpg", ".jpeg", ".png", "webp" };
+        var extension=Path.GetExtension(dto.Image.FileName).ToLower();
+        
+        if (!validExtension.Contains(extension))
+            return BadRequest(new
+            {
+                status = "error",
+                message = "Only JPG, JPEG, and WEBP image formats are allowed"
+            });
+        
+        if (dto.Image.Length > 2 * 1024 * 1024)
+            return BadRequest(new
+            {
+                status = "error",
+                message = "Image size must not exceed 2MB"
+            });
+        
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Images/Books");
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+        var uniqueFileName = Guid.NewGuid().ToString() + extension;
+        var filePath = Path.Combine(path, uniqueFileName);
+        await using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await dto.Image.CopyToAsync(stream);  // <-- Missing line added here
+        }
+        dto.ImageUrl ="/Images/Books/"+uniqueFileName;
+        
         if (await _service.CreateBookAsync(dto))
         {
             return Ok(new
@@ -61,24 +95,15 @@ public class BookApiController(IBookService service) :ControllerBase {
                 message = "Book creation failed"
             });
     }
-
-    [HttpPost]
-    public async Task<IActionResult> Update(UpdateBookDto dto)
+    [HttpPut]
+    public async Task<IActionResult> Update( UpdateBookDto dto)
     {
-        if (dto.BookId == null || dto.BookId <1)
+        if (dto.BookId <1)
             return BadRequest(new
             {
                 status = "error",
                 message = "Invalid book id"
             });
-        if (dto == null)
-            return BadRequest(new
-            {
-                status = "error",
-                message = "Book object is null"
-            });
-        
-
         if (string.IsNullOrEmpty(dto.BookName))
             return BadRequest(new
             {
@@ -105,6 +130,27 @@ public class BookApiController(IBookService service) :ControllerBase {
                 status = "error",
                 message = "select a valid category",
             });
+        if (dto.Image != null)
+        {
+
+            var validExtension = new List<string> { ".jpg", ".jpeg", ".png", "webp" };
+            var extension = Path.GetExtension(dto.Image.FileName).ToLower();
+            if (!validExtension.Contains(extension))
+                return BadRequest(new
+                    { status = "error", message = "Only JPG, JPEG, and WEBP image formats are allowed" });
+            if (dto.Image.Length > 2 * 1024 * 1024)
+                return BadRequest(new { status = "error", message = "Image size must not exceed 2MB" });
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Images/Books");
+            var uniqueFileName = Guid.NewGuid().ToString() + extension;
+            var filePath = Path.Combine(path, uniqueFileName);
+
+            await using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await dto.Image.CopyToAsync(stream);
+            }
+
+            dto.ImageUrl = "/Images/Books/" + uniqueFileName;
+        }
 
         if (await _service.UpdateBookAsync(dto))
             return Ok(new

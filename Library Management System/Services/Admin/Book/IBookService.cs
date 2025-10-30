@@ -8,5 +8,6 @@ public interface IBookService
     Task<bool> UpdateBookAsync(UpdateBookDto updateBookDto);
     Task<bool> DeleteBookAsync(int id);
     Task<Models.Book> GetBookAsync(int id);
-    
+    Task<List<Models.Book>> GetAllBooksAsync();
+
 }

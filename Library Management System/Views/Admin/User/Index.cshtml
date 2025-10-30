@@ -5,14 +5,6 @@
 }
 
 <div class="container-fluid py-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Categories</h2>
-        <a href="@Url.Action("Create", "Category")" class="btn btn-primary shadow-sm">
-            <i class="bi bi-plus-lg"></i> Add Category
-        </a>
-    </div>
-
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
@@ -37,11 +29,11 @@
                                 <td class="text-center">
                                     @if (@user.Role == "Admin")
                                     {
-                                        <button> Downgrade to Student</button>
+                                        <button onclick="downgradeUser(@user.Id)"> Downgrade to Student</button>
                                     }
                                     else
                                     {
-                                        <button> Upgrade to Admin</button>
+                                        <button onclick="upgradeUser(@user.Id)"> Upgrade to Admin</button>
                                     }
                                     <button type="button" class="btn btn-sm btn-danger" onclick="blackListUser(@user.Id)">
                                         <i class="bi bi-trash-fill"></i> Blacklist
@@ -63,3 +55,137 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        function blackListUser(id) {
+         Swal.fire({
+             title: 'Are you sure?',
+             text: "The User will not be able to login to the system.",
+             icon: 'warning',
+             ShowCancelButton: true,
+             ConfirmButtonColor: '#3085d6',
+             CancelButtonColor: '#d33',
+             ConfirmButtonText: 'Yes, blacklist!'
+         }).then((result) => {
+             if(result.isConfirmed){
+                 $.ajax({
+                     url:" /api/users/blacklist/"+id,
+                     method:"PATCH",
+                     success:function(response){
+                         if(response.status === "success"){
+                             Swal.fire({
+                                 title: 'Success!',
+                                 text: "The User has been blacklisted.",      
+                             }).then((result) => {
+                                 window.location.reload();
+                             });   
+                         }else{
+                             Swal.fire({
+                                 title: 'Error!',
+                                 text: response.message||"The User has not been blacklisted.",
+                             }).then((result) => {
+                                 window.location.reload();
+                             });
+                         }
+                     },
+                     error:function(error){
+                         Swal.fire(
+                             'Error!',
+                             error.message||"The User has not been blacklisted.",
+                             'error'
+                         );
+                     } 
+                 });
+             }
+         });
+        }
+        function upgradeUser(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "The user will be upgraded to Admin.",
+                icon: 'info',
+                ShowCancelButton: true,
+                ConfirmButtonColor: '#3085d6',
+                CancelButtonColor: '#d33',
+                ConfirmButtonText: 'Yes, upgrade!'
+            }).then((result) => {
+                if(result.isConfirmed){
+                    $.ajax({
+                        url:" /api/users/upgrade/"+id,
+                        method:"PATCH",
+                        success:function(response){
+                            if(response.status === "success"){
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: "The User has been upgraded to Admin.",
+                                }).then((result) => {
+                                    window.location.reload();
+                                });
+                            }else{
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.message||"The User cannot be upgraded to Admin.",
+                                }).then((result) => {
+                                    window.location.reload();
+                                });
+                            }
+                        },
+                        error:function(error){
+                            Swal.fire(
+                                'Error!',
+                                error.message||"User cannot be upgraded to Admin.",
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+            
+        }
+        function downgradeUser(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "The user will be downgrade to student.",
+                icon: 'info',
+                ShowCancelButton: true,
+                ConfirmButtonColor: '#3085d6',
+                CancelButtonColor: '#d33',
+                ConfirmButtonText: 'Yes, downgrade!'
+            }).then((result) => {
+                if(result.isConfirmed){
+                    $.ajax({
+                        url:" /api/users/downgrade/"+id,
+                        method:"PATCH",
+                        success:function(response){
+                            if(response.status === "success"){
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: "The User has been downgraded to Student.",
+                                }).then((result) => {
+                                    window.location.reload();
+                                });
+                            }else{
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.message||"The User cannot be downgraded to Student.",
+                                }).then((result) => {
+                                    window.location.reload();
+                                });
+                            }
+                        },
+                        error:function(error){
+                            Swal.fire(
+                                'Error!',
+                                error.message||"User cannot be downgraded to Student.",
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+
+        }
+        
+    </script>
+}

@@ -5,13 +5,13 @@ using Library_Management_System.Services.Admin.User;
 
 
 namespace Library_Management_System.ApiControllers.Admin;
-[Microsoft.AspNetCore.Components.Route("api/users/")]
+[Route("api/users")]
 [ApiController]
 public class UserApiController(IUserControlService userControlService):ControllerBase
 {
     private readonly IUserControlService _userControlService=userControlService;
     
-    [HttpPost("upgrade/{id}")]
+    [HttpPatch("upgrade/{id}")]
     public async Task<IActionResult> UpgradeToAdmin(int id)
     {
         if (id == null)
@@ -45,7 +45,7 @@ public class UserApiController(IUserControlService userControlService):Controlle
         }
     }
 
-    [HttpPost("downgrade/{id}")]
+    [HttpPatch("downgrade/{id}")]
     public async Task<IActionResult> DowngradeToStudent(int id)
     {
         if (id==null||id<1)
@@ -78,11 +78,11 @@ public class UserApiController(IUserControlService userControlService):Controlle
             );
         }
     }
-    [HttpPost("blacklist/{id}")]
+    [HttpPatch("blacklist/{id}")]
 
     public async Task<IActionResult> BlackListUser(int id)
     {
-        if (id == null)
+        if (id <1)
             return BadRequest(new
             {
                 status = "Error",

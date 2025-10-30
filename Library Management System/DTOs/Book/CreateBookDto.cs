@@ -1,3 +1,4 @@
+
 namespace Library_Management_System.DTOs.Book;
 
 public class CreateBookDto
@@ -10,4 +11,8 @@ public class CreateBookDto
     public DateOnly PublishDate { get; set; } 
     public int CategoryId { get; set; }
     public string Publisher { get; set; }
+    
+    public IFormFile Image { get; set; }
+    
+    public string? ImageUrl { get; set; }
 }
