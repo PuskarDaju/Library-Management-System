@@ -1,111 +1,105 @@
-﻿@model List<Library_Management_System.Models.Book>;
+﻿@model List<Library_Management_System.Models.Book>
 @{
-  ViewData["Title"] = "Library";
+    Layout = "_StudentLayout";
+    ViewData["Title"] = "Library";
 }
-  <nav class="bg-white shadow-md p-4 flex justify-between items-center">
-    <div class="text-2xl font-bold text-indigo-600">VIP Library</div>
-    <div class="flex items-center space-x-4">
-      <div class="text-gray-700">Hello, <span class="font-semibold">VIP User</span></div>
-      <button class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
-        Logout
-      </button>
-    </div>
-  </nav>
-
-  <div class="max-w-7xl mx-auto p-6">
-
-    <div class="mb-6">
-      <input 
-        type="text" 
-        id="searchInput"
-        placeholder="Search for books..."
-        class="w-full md:w-1/2 p-3 rounded shadow border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-      />
+<div class="container mx-auto px-4 py-6">
+    <!-- Search Bar -->
+    <div class="mb-8">
+        <input 
+            type="text" 
+            id="searchInput"
+            placeholder="Search for books..."
+            class="w-full md:w-1/2 p-3 rounded shadow border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        />
     </div>
 
-    <div id="booksContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-     
+    <!-- New Books Section -->
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">New Arrivals</h2>
+        <div id="newBooksContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- New books rendered via JS -->
+        </div>
     </div>
-  </div>
 
-@section Scripts{
-    <script>
-      const books = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+    <!-- All Books Section -->
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">All Books</h2>
+        <div id="booksContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- All books rendered via JS -->
+        </div>
+    </div>
+</div>
 
-      console.log(books);
+@section Scripts {
+<script>
+    // All books data from backend
+    const books = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
 
+    // Containers
     const booksContainer = document.getElementById('booksContainer');
+    const newBooksContainer = document.getElementById('newBooksContainer');
     const searchInput = document.getElementById('searchInput');
-    
-    function renderBooks(filteredBooks) {
-      booksContainer.innerHTML = '';
-      filteredBooks.forEach(book => {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden';
 
+    // Function to create book card
+    function createBookCard(book) {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden flex flex-col';
         card.innerHTML = `
-          <img src="${book.Image_Url}" alt="${book.Book_Name}" class="w-full h-48 object-cover">
-          <div class="p-4">
-            <h3 class="font-semibold text-lg text-gray-800">${book.Book_Name}</h3>
-            <p class="text-gray-500 mt-1">by ${book.Author}</p>
-            <div class="mt-3 flex justify-between items-center">
-              <span class="text-indigo-600 font-bold">Rs.${book.Price.toFixed(2)}</span>
-              <div class="space-x-2">
-                <button onclick="rentBook(${book.Book_id})" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition text-sm">Rent</button>
-                <button onclick="buyBook(${book.Book_id})" class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 transition text-sm">Buy</button>
-              </div>
+            <img src="${book.Image_Url}" alt="${book.Book_Name}" class="w-full h-48 object-cover">
+            <div class="p-4 flex-1 flex flex-col justify-between">
+                <div>
+                    <h3 class="font-semibold text-lg text-gray-800">${book.Book_Name}</h3>
+                    <p class="text-gray-500 mt-1">by ${book.Author}</p>
+                </div>
+                <div class="mt-3 flex justify-between items-center">
+                    <span class="text-indigo-600 font-bold">Rs.${book.Price.toFixed(2)}</span>
+                    <div class="space-x-2">
+                        <button onclick="rentBook(${book.Book_id})" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition text-sm">Rent</button>
+                        <button onclick="buyBook(${book.Book_id})" class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 transition text-sm">Buy</button>
+                    </div>
+                </div>
             </div>
-          </div>
         `;
-        booksContainer.appendChild(card);
-      });
+        return card;
     }
 
-    // Initial render
-    renderBooks(books);
+    // Render books in a container
+    function renderBooks(container, booksArray) {
+        container.innerHTML = '';
+        booksArray.forEach(book => {
+            container.appendChild(createBookCard(book));
+        });
+    }
 
-    // Search filter
+    // Render all books
+    renderBooks(booksContainer, books);
+
+    // Render newest books (last 4 for demo)
+    const newestBooks = books.slice(-4).reverse();
+    renderBooks(newBooksContainer, newestBooks);
+
+    // Search functionality
     searchInput.addEventListener('input', () => {
-      const query = searchInput.value.toLowerCase();
-      const filteredBooks = books.filter(b => b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query));
-      renderBooks(filteredBooks);
+        const query = searchInput.value.toLowerCase();
+        const filtered = books.filter(b =>
+            b.Book_Name.toLowerCase().includes(query) ||
+            b.Author.toLowerCase().includes(query)
+        );
+        renderBooks(booksContainer, filtered);
+
+        // Filter new books separately if needed
+        const filteredNew = newestBooks.filter(b =>
+            b.Book_Name.toLowerCase().includes(query) ||
+            b.Author.toLowerCase().includes(query)
+        );
+        renderBooks(newBooksContainer, filteredNew);
     });
 
-    // SweetAlert2 for Rent
-    function rentBook(bookId) {
-      const book = books.find(b => b.id === bookId);
-      Swal.fire({
-        title: `Rent "${book.title}"?`,
-        text: "You will be charged the rent price.",
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, Rent',
-        cancelButtonText: 'Cancel'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Call your backend API here via fetch/ajax
-          Swal.fire('Success!', `"${book.title}" rented successfully.`, 'success');
-        }
-      });
-    }
-
-    // SweetAlert2 for Buy
-    function buyBook(bookId) {
-      const book = books.find(b => b.id === bookId);
-      Swal.fire({
-        title: `Buy "${book.title}"?`,
-        text: "You will be charged the purchase price.",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, Buy',
-        cancelButtonText: 'Cancel'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Call your backend API here via fetch/ajax
-          Swal.fire('Success!', `"${book.title}" purchased successfully.`, 'success');
-        }
-      });
-    }
-  </script>
+    // Dummy functions for Rent/Buy
+    function rentBook(id) { alert("Rent book ID: " + id); }
+    function buyBook(id) { alert("Buy book ID: " + id); }
+</script>
 }
+
   
