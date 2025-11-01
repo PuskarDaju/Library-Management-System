@@ -12,11 +12,10 @@ public class StudentController(IBookService service):Controller
     public async Task<IActionResult> Index()
     {
         ViewData["ActiveMenu"] = "Student";
-        var books= await _service.GetAllBooksAsync();
-        return View("Index",books);
+        var newBooks= await _service.GetNewBooks();
+        return View("Index",newBooks);
     }
     [Route("Requests")]
-
     public async Task<IActionResult> Requests()
     {
         ViewData["ActiveMenu"] = "Requests";

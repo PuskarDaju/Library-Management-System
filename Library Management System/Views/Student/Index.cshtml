@@ -26,22 +26,49 @@
     <div class="mb-12">
         <h2 class="text-2xl font-bold text-gray-800 mb-4">All Books</h2>
         <div id="booksContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- All books rendered via JS -->
+          
         </div>
     </div>
 </div>
 
 @section Scripts {
 <script>
-    // All books data from backend
-    const books = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
-
-    // Containers
     const booksContainer = document.getElementById('booksContainer');
     const newBooksContainer = document.getElementById('newBooksContainer');
     const searchInput = document.getElementById('searchInput');
+    function normalizeBook(book) {
+        return {
+            Book_id: book.Book_id || book.book_id,
+            Book_Name: book.Book_Name || book.book_Name,
+            Author: book.Author || book.author,
+            Publisher: book.Publisher || book.publisher,
+            Price: book.Price ||book.price,
+            Image_Url:book.Image_Url||book.image_Url
+        };
+    }
+    async function loadAllBooks() {
+        let allBooks=[];
+        let page=1;
+        let pageSize=6;
+        let totalPages=1;
+        do{
+            const response=await fetch(`/api/Student/paginated?page=${page}&pageSize=${pageSize}`);
+            const data = await response.json();
+            allBooks =data.items;
+            totalPages = data.totalPages;
+            page++;
+            renderBooks(booksContainer, allBooks,true);
+            await sleep(1000);
+        }while(page<=totalPages);
+    }
+    
+    $(document).ready(function () {
+       loadAllBooks();
+    });
 
-    // Function to create book card
+
+    
+
     function createBookCard(book) {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden flex flex-col';
@@ -63,41 +90,26 @@
         `;
         return card;
     }
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
-    // Render books in a container
-    function renderBooks(container, booksArray) {
-        container.innerHTML = '';
+   
+    function renderBooks(container, booksArray,append=false) {
+       if(!append)
+            container.innerHTML = '';
         booksArray.forEach(book => {
+            book = normalizeBook(book);
             container.appendChild(createBookCard(book));
         });
     }
 
-    // Render all books
-    renderBooks(booksContainer, books);
 
-    // Render newest books (last 4 for demo)
-    const newestBooks = books.slice(-4).reverse();
+    const newestBooks = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
     renderBooks(newBooksContainer, newestBooks);
-
-    // Search functionality
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.toLowerCase();
-        const filtered = books.filter(b =>
-            b.Book_Name.toLowerCase().includes(query) ||
-            b.Author.toLowerCase().includes(query)
-        );
-        renderBooks(booksContainer, filtered);
-
-        // Filter new books separately if needed
-        const filteredNew = newestBooks.filter(b =>
-            b.Book_Name.toLowerCase().includes(query) ||
-            b.Author.toLowerCase().includes(query)
-        );
-        renderBooks(newBooksContainer, filteredNew);
-    });
     
-    function rentBook(id) { alert("Rent book ID: " + id); }
-    function buyBook(id) { alert("Buy book ID: " + id); }
+    
+
 </script>
 }
 

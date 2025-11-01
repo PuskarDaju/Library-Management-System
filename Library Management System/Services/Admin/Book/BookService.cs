@@ -1,5 +1,6 @@
 using Library_Management_System.Data;
 using Library_Management_System.DTOs.Book;
+using Library_Management_System.Models;
 using Library_Management_System.Services.Admin.Exception;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -76,8 +77,36 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         return book ?? throw new BookNotFoundException(id);
     }
 
+    public async Task<List<Models.Book>> GetNewBooks()
+    {
+        var newBooks = await _context.Books.OrderByDescending(b => b.Book_id).Take(4).ToListAsync();
+        return newBooks;
+    }
+
     public async Task<List<Models.Book>> GetAllBooksAsync()
     {
         return await _context.Books.ToListAsync();
+    }
+
+    public async Task<PaginatedBook<Models.Book>> GetPaginatedBooks(int page=1,int pageSize=6)
+    {
+        var skip = (page - 1) * pageSize;
+        var totalBooks = await _context.Books.CountAsync();
+
+        var books = await _context.Books
+            .OrderBy(b => b.Book_Name)
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync();
+        var totalPages = (int)Math.Ceiling((double) totalBooks / pageSize);
+
+        return new PaginatedBook<Models.Book>()
+        {
+            Items = books,
+            CurrentPage = page,
+            TotalPages = totalPages,
+            PageSize = pageSize,
+            TotalCount = totalBooks
+        };
     }
 }
