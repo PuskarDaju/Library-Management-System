@@ -1,0 +1,115 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    var activeMenu = ViewData["ActiveMenu"]?.ToString() ?? "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: #374151; 
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .sidebar-link:hover {
+            background-color: #6366f1;
+            color: #ffffff;
+        }
+
+  
+        .sidebar-link.active {
+            background-color: #4f46e5;
+            color: #ffffff;
+            font-weight: 600;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <title>@ViewData["Title"] - Library Management System</title>
+    @await RenderSectionAsync("HeadScript", false)
+</head>
+
+<body class="bg-gray-100 font-sans">
+<div class="flex min-h-screen w-full">
+    <aside id="sidebar" class="w-64 bg-white shadow-lg p-5 space-y-2">
+        <h3 class="text-gray-500 uppercase text-sm font-semibold mb-3">Navigation</h3>
+        
+        <a href="/Student" class="sidebar-link @(activeMenu == "Student" ? "active" : "")">
+            <i class="fa-solid fa-house-laptop mr-3"></i> Dashboard
+        </a>
+
+        <a href="/Student/Requests" class="sidebar-link @(activeMenu == "MyBooks" ? "active" : "")">
+            <i class="fa-solid fa-envelope-open-text mr-3"></i> My Requests
+        </a>
+
+        <a href="/Student/Rentals" class="sidebar-link @(activeMenu == "Rentals" ? "active" : "")">
+            <i class="fa-solid fa-book-open-reader mr-3"></i> Rented Books
+        </a>
+
+        <a href="/Student/History" class="sidebar-link @(activeMenu == "Wishlist" ? "active" : "")">
+            <i class="fa-solid fa-clock-rotate-left mr-3"></i> History
+        </a>
+
+        <a href="/Student/Profile" class="sidebar-link @(activeMenu == "Profile" ? "active" : "")">
+            <i class="fa-solid fa-user-circle mr-3"></i> Profile
+        </a>
+    </aside>
+    <div class="flex flex-col flex-1 w-full overflow-y-auto">
+        
+        <nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center sticky top-0 z-10 border-b border-gray-200">
+
+            <div class="flex items-center gap-4">
+                <button id="toggleSidebar"
+                        class="text-gray-600 hover:text-indigo-600 focus:outline-none transition">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+
+                <div class="flex items-center gap-2 text-2xl font-bold text-indigo-600">
+                    <i class="fa-solid fa-book-open text-indigo-600"></i>
+                    <span class="hidden sm:block">Our Library</span>
+                </div>
+            </div>
+
+          
+            <div class="flex items-center gap-4">
+
+                <div class="hidden md:block text-gray-700">
+                    Hello, <span class="font-semibold text-indigo-600">@User.Identity?.Name ?? "Student"</span>
+                </div>
+
+                <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
+                    <button type="submit"
+                            class="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg 
+                           hover:bg-indigo-700 active:bg-indigo-800 transition duration-200 shadow-sm">
+                        <i class="fa-solid fa-right-from-bracket mr-2"></i>
+                        <span class="hidden sm:inline">Logout</span>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <main class="flex-1 p-8 bg-gray-50">
+            @RenderBody()
+        </main>
+    </div>
+   
+</div>
+
+@await RenderSectionAsync("Scripts", false)
+
+
+<script>
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleSidebar');
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+        }); 
+    </script>
+</body>
+</html>
