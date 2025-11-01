@@ -4,10 +4,8 @@
 
 namespace Library_Management_System.Migrations
 {
-    /// <inheritdoc />
     public partial class FixUserRoleEnum : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
