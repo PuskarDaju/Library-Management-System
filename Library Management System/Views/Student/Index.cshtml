@@ -52,13 +52,13 @@
         let pageSize=6;
         let totalPages=1;
         do{
-            const response=await fetch(`/api/Student/paginated?page=${page}&pageSize=${pageSize}`);
+            const response=await fetch(`/api/Student/paginated?page=${page}&size=${pageSize}`);
             const data = await response.json();
             allBooks =data.items;
             totalPages = data.totalPages;
             page++;
             renderBooks(booksContainer, allBooks,true);
-            await sleep(1000);
+            
         }while(page<=totalPages);
     }
     
@@ -89,9 +89,6 @@
             </div>
         `;
         return card;
-    }
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
    
