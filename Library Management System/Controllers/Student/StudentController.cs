@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management_System.Controllers.Student;
 
-[Route("student")]
+[Route("Student")]
 public class StudentController(IBookService service):Controller
 {
     private readonly IBookService _service=service ?? throw new ArgumentNullException(nameof(service));
@@ -40,7 +40,7 @@ public class StudentController(IBookService service):Controller
     [Route("Profile")]
     public async Task<IActionResult> Profile()
     {
-        ViewData["ActiveMenu"] = "History";
+        ViewData["ActiveMenu"] = "Profile";
         return View("Profile/Index");  
     }
 }
