@@ -4,32 +4,9 @@
     ViewData["Title"] = "Books";
 }
 
-@section HeadScript
-{
-    <style>
-        #tableRow:hover {
-            background-color: #6366f1;
-           td{
-               color: white;
-           }
-        }
-        .btn{
-            background-color:#6366f1;
-            color:white;
-            font-weight:bold;
-        }
-        .btn:hover{
-            background-color:#4f46e5;
-            color:#F7E7CE;
-        }
-        
-    </style>
-    
-}
-
 <div class="container mx-auto px-4 py-6">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="@Url.Action("Create", "Book")" class="btn shadow-sm">
+        <a href="@Url.Action("Create", "Book")" class="btn shadow-sm btn-addButton">
             <i class="bi bi-plus-lg"></i> Add Book
         </a>
     </div>
