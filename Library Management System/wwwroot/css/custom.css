@@ -15,3 +15,23 @@
     background-color:#4f46e5;
     color:#F7E7CE;
 }
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        color: #374151;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .sidebar-link:hover {
+        background-color: #6366f1;
+        color: #ffffff;
+    }
+
+
+    .sidebar-link.active {
+        background-color: #4f46e5;
+        color: #ffffff;
+        font-weight: 600;
+    }

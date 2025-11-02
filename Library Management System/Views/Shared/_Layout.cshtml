@@ -18,29 +18,6 @@
     
     <link rel="stylesheet" href="~/css/admin.css" />
     @await RenderSectionAsync("HeadScript", false)
-    <style>
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            color: #374151;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .sidebar-link:hover {
-            background-color: #6366f1;
-            color: #ffffff;
-        }
-
-
-        .sidebar-link.active {
-            background-color: #4f46e5;
-            color: #ffffff;
-            font-weight: 600;
-        }
-    </style>
-
 </head>
 <body  class="bg-gray-100 font-sans">
 
@@ -65,6 +42,10 @@
         <a asp-controller="User" asp-action="Index" class="sidebar-link @(activeMenu == "Users" ? "active" : "")">
             <i class="bi bi-people-fill me-2"></i> Users
         </a>
+        <a asp-controller="Request" asp-action="Index" class="sidebar-link @(activeMenu == "Request" ? "active" : "" )">
+            <i class="bi-inbox me-2"></i> Requests
+        </a>
+        
         <a asp-controller="IssuedBooks" asp-action="Index" class="sidebar-link @(activeMenu == "IssuedBooks" ? "active" : "")">
             <i class="bi bi-journal-check me-2"></i> Issued Books
         </a>
