@@ -1,44 +1,60 @@
 
+@using Library_Management_System.Enum
 @model IEnumerable<Library_Management_System.Models.User>;
 @{
     ViewData["Title"] = "Users";
 }
 
-<div class="container-fluid py-4">
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th class="text-center">Actions</th>
+<div class="card-body">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white rounded-xl shadow-lg overflow-hidden">
+                        <thead  class="bg-[#4f46e5]">
+                        <tr>
+                
+                            <th class="py-3 px-5 text-left text-sm font-semibold uppercase tracking-wider text-white">#</th>
+                            <th class="py-3 px-5 text-left text-sm font-semibold uppercase tracking-wider text-white">Name</th>
+                            <th class="py-3 px-5 text-left text-sm font-semibold uppercase tracking-wider text-white">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @if (Model != null)
+                    @if (Model.Any())
                     {
-                        int index = 1;
+                        var index = 1;
                         foreach (var user in Model)
                         {
-                            <tr>
-                                <td>@index</td>
-                                <td>@user.Full_Name</td>
-                                    
-                                <td class="text-center">
-                                    @if (@user.Role == "Admin")
-                                    {
-                                        <button onclick="downgradeUser(@user.Id)"> Downgrade to Student</button>
-                                    }
-                                    else
-                                    {
-                                        <button onclick="upgradeUser(@user.Id)"> Upgrade to Admin</button>
-                                    }
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="blackListUser(@user.Id)">
-                                        <i class="bi bi-trash-fill"></i> Blacklist
-                                    </button>
+                            <tr class="transition duration-200"  id="tableRow">
+                                <td class="py-3 px-5 text-sm text-gray-700">@index</td>
+                                <td class="py-3 px-5 text-sm text-gray-700">@user.Full_Name</td>
+                                <td class="py-3 px-5 text-sm text-gray-700">
+                                    <div class="flex items-center gap-2">
+
+                                        @if (@user.Role == UserRoleEnum.Student)
+                                        {
+                                            <button type="button"
+                                                    class="px-3 py-1 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition flex items-center gap-1"
+                                                    onclick="upgradeUser(@user.Id)">
+                                                <i class="bi bi-arrow-up-circle-fill"></i> Upgrade to Admin
+                                            </button>
+                                        }
+                                        else if (@user.Role == UserRoleEnum.Admin)
+                                        {
+                                            <button type="button"
+                                                    class="px-3 py-1 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600 transition flex items-center gap-1"
+                                                    onclick="downgradeUser(@user.Id)">
+                                                <i class="bi bi-arrow-down-circle-fill"></i> Downgrade to Student
+                                            </button>
+                                        }
+
+                                        <button type="button"
+                                                class="px-3 py-1 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition flex items-center gap-1"
+                                                onclick="blackListUser(@user.Id)">
+                                            <i class="bi bi-slash-circle-fill"></i> Blacklist
+                                        </button>
+
+                                    </div>
                                 </td>
+
+
                             </tr>
                             index++;
                         }
@@ -53,8 +69,6 @@
                 </table>
             </div>
         </div>
-    </div>
-</div>
 
 @section Scripts{
     <script>
@@ -63,10 +77,10 @@
              title: 'Are you sure?',
              text: "The User will not be able to login to the system.",
              icon: 'warning',
-             ShowCancelButton: true,
-             ConfirmButtonColor: '#3085d6',
-             CancelButtonColor: '#d33',
-             ConfirmButtonText: 'Yes, blacklist!'
+             showCancelButton: true,
+             confirmButtonColor: '#3085d6',
+             cancelButtonColor: '#d33',
+             confirmButtonText: 'Yes, blacklist!'
          }).then((result) => {
              if(result.isConfirmed){
                  $.ajax({
@@ -77,14 +91,14 @@
                              Swal.fire({
                                  title: 'Success!',
                                  text: "The User has been blacklisted.",      
-                             }).then((result) => {
+                             }).then(() => {
                                  window.location.reload();
                              });   
                          }else{
                              Swal.fire({
                                  title: 'Error!',
                                  text: response.message||"The User has not been blacklisted.",
-                             }).then((result) => {
+                             }).then(() => {
                                  window.location.reload();
                              });
                          }
@@ -105,10 +119,10 @@
                 title: 'Are you sure?',
                 text: "The user will be upgraded to Admin.",
                 icon: 'info',
-                ShowCancelButton: true,
-                ConfirmButtonColor: '#3085d6',
-                CancelButtonColor: '#d33',
-                ConfirmButtonText: 'Yes, upgrade!'
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, upgrade!'
             }).then((result) => {
                 if(result.isConfirmed){
                     $.ajax({
@@ -119,14 +133,14 @@
                                 Swal.fire({
                                     title: 'Success!',
                                     text: "The User has been upgraded to Admin.",
-                                }).then((result) => {
+                                }).then(() => {
                                     window.location.reload();
                                 });
                             }else{
                                 Swal.fire({
                                     title: 'Error!',
                                     text: response.message||"The User cannot be upgraded to Admin.",
-                                }).then((result) => {
+                                }).then(() => {
                                     window.location.reload();
                                 });
                             }
@@ -148,10 +162,10 @@
                 title: 'Are you sure?',
                 text: "The user will be downgrade to student.",
                 icon: 'info',
-                ShowCancelButton: true,
-                ConfirmButtonColor: '#3085d6',
-                CancelButtonColor: '#d33',
-                ConfirmButtonText: 'Yes, downgrade!'
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, downgrade!'
             }).then((result) => {
                 if(result.isConfirmed){
                     $.ajax({
@@ -162,14 +176,14 @@
                                 Swal.fire({
                                     title: 'Success!',
                                     text: "The User has been downgraded to Student.",
-                                }).then((result) => {
+                                }).then(() => {
                                     window.location.reload();
                                 });
                             }else{
                                 Swal.fire({
                                     title: 'Error!',
                                     text: response.message||"The User cannot be downgraded to Student.",
-                                }).then((result) => {
+                                }).then(() => {
                                     window.location.reload();
                                 });
                             }

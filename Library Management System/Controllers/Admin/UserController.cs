@@ -9,7 +9,7 @@ public class UserController(ApplicationDbContext context):Controller
 {
     private readonly ApplicationDbContext _context=context;
     public async Task<IActionResult> Index()
-    {
+    {ViewBag.ActiveMenu="Users";
         var users = await _context.Users.Where(u=>u.Role!="Blacklist").ToListAsync();
         return View("/Views/Admin/User/Index.cshtml", users);
     }
