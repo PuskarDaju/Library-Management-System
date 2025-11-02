@@ -1,4 +1,5 @@
-﻿using Library_Management_System.Services;
+﻿using Library_Management_System.Helpers;
+using Library_Management_System.Services;
 using Library_Management_System.Services.Admin.Book;
 using Library_Management_System.Services.Admin.Category;
 using Library_Management_System.Services.Admin.User;
@@ -13,5 +14,6 @@ public static class ServiceExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IBookService, BookService>();
          services.AddScoped<IUserControlService,UserControlService>();
+         services.AddScoped<JwtService>();
     }
 }

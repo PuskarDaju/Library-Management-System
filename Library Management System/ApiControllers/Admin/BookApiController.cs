@@ -1,14 +1,17 @@
 using Library_Management_System.DTOs.Book;
 using Library_Management_System.Services.Admin.Book;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace Library_Management_System.ApiControllers.Admin;
 [ApiController]
-[Route($"api/book-api/[action]")]
+[Route("api/book-api/[action]")]
+[Authorize(Roles = "Admin")]
 public class BookApiController(IBookService service) :ControllerBase {
     private readonly IBookService _service=service;
     [HttpPost]
+    
     public async Task<IActionResult> Create( CreateBookDto dto) {
         if (dto == null)
             return BadRequest(new
