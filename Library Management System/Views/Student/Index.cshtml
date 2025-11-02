@@ -63,7 +63,7 @@
         };
     }
 
-    // Create book card
+
     function createBookCard(book) {
         return Object.assign(document.createElement('div'), {
             className: 'bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden flex flex-col',
@@ -108,9 +108,9 @@
             if (!response.ok) throw new Error('Network error');
 
             const data = await response.json();
-            const items = term ? data.items.items : data.items;
+            const items =data.items;
 
-            totalPages = term ? data.items.totalPages : data.totalPages;
+            totalPages = data.totalPages;
             renderBooks(booksContainer, items, page > 1);
 
             if (items.length === 0 && page === 1) {

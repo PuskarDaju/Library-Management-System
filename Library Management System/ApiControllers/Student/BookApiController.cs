@@ -20,8 +20,10 @@ public class BookApiController(IBookService service):ControllerBase
         var books = await _service.GetSearchedBook(searchTerm,page);
         return Ok(new
         {
-            status = "success",
-            items = books
+           items=books.Items,
+           CurrentPage=books.CurrentPage,
+           pageSize=books.PageSize,
+           totalCount=books.TotalCount,
         });
 
     }
