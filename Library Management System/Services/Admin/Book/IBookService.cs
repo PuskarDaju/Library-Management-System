@@ -11,6 +11,7 @@ public interface IBookService
     Task<Models.Book> GetBookAsync(int id);
     
     Task<List<Models.Book>> GetNewBooks();
+    Task<PaginatedBook<Models.Book>> GetSearchedBook(string searchString,int page=1,int pageSize=6);
     
     Task<PaginatedBook<Models.Book>> GetPaginatedBooks(int page=1,int pageSize=6);
 
