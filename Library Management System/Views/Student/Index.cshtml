@@ -39,41 +39,35 @@
     const searchInput = document.getElementById('searchInput');
     const errorDiv = document.getElementById('loadBookError');
     const errorText = document.getElementById('loadBookErrorText');
+    const loadingDiv = document.createElement('div');
+
+    loadingDiv.textContent = 'Loading more books...';
+    loadingDiv.className = 'text-gray-500 text-center mt-4';
+    booksContainer.parentNode.appendChild(loadingDiv);
+    loadingDiv.style.display = 'none';
+
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentTerm = '';
+    let isLoading = false;
+
+    // Normalize book object
     function normalizeBook(book) {
         return {
             Book_id: book.Book_id || book.book_id,
             Book_Name: book.Book_Name || book.book_Name,
             Author: book.Author || book.author,
             Publisher: book.Publisher || book.publisher,
-            Price: book.Price ||book.price,
-            Image_Url:book.Image_Url||book.image_Url
+            Price: book.Price || book.price,
+            Image_Url: book.Image_Url || book.image_Url
         };
     }
-    async function loadAllBooks() {
-        let allBooks=[];
-        let page=1;
-        let pageSize=6;
-        let totalPages=1;
-        do{
-            const response=await fetch(`/api/Student/paginated?page=${page}&size=${pageSize}`);
-            const data = await response.json();
-            allBooks =data.items;
-            totalPages = data.totalPages;
-            page++;
-            renderBooks(booksContainer, allBooks,page>2);
-            
-        }while(page<=totalPages);
-    }
-    
-    $(document).ready(function () {
-       loadAllBooks();
-    });
 
-    
+    // Create book card
     function createBookCard(book) {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden flex flex-col';
-        card.innerHTML = `
+        return Object.assign(document.createElement('div'), {
+            className: 'bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden flex flex-col',
+            innerHTML: `
             <img src="${book.Image_Url}" alt="${book.Book_Name}" class="w-full h-48 object-cover">
             <div class="p-4 flex-1 flex flex-col justify-between">
                 <div>
@@ -88,66 +82,85 @@
                     </div>
                 </div>
             </div>
-        `;
-        return card;
-    }
-
-   
-    function renderBooks(container, booksArray,append=false) {
-       if(!append)
-            container.innerHTML = '';
-        booksArray.forEach(book => {
-            book = normalizeBook(book);
-            container.appendChild(createBookCard(book));
+        `
         });
     }
-    const newestBooks = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
-    renderBooks(newBooksContainer, newestBooks);
 
-    //function to debounce search input
-    //this is to prevent the search from being called every time a key is pressed
+    // Render books
+    function renderBooks(container, booksArray, append = true) {
+        if (!append) container.innerHTML = '';
+        booksArray.forEach(book => container.appendChild(createBookCard(normalizeBook(book))));
+    }
+
+    // Fetch books from API (paginated)
+    async function fetchBooks(term = '', page = 1) {
+        if (isLoading) return;
+        if (page > totalPages) return;
+
+        isLoading = true;
+        loadingDiv.style.display = 'block';
+        errorDiv.classList.add('hidden');
+
+        try {
+            const response = await fetch(term
+                ? `/api/student/search?searchTerm=${encodeURIComponent(term)}&page=${page}`
+                : `/api/Student/paginated?page=${page}&size=6`);
+            if (!response.ok) throw new Error('Network error');
+
+            const data = await response.json();
+            const items = term ? data.items.items : data.items;
+
+            totalPages = term ? data.items.totalPages : data.totalPages;
+            renderBooks(booksContainer, items, page > 1);
+
+            if (items.length === 0 && page === 1) {
+                errorText.textContent = "We couldn't find any books matching your search. Please try different keywords.";
+                errorDiv.classList.remove('hidden');
+            }
+        } catch (err) {
+            console.error(err);
+            errorText.textContent = "Oops! Something went wrong. Please try again later.";
+            errorDiv.classList.remove('hidden');
+        } finally {
+            loadingDiv.style.display = 'none';
+            isLoading = false;
+        }
+}
+
+    // Load initial books
+    let newestBooks = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+    renderBooks(newBooksContainer, newestBooks);
+    fetchBooks();
+
+    // Debounce function
     function debounce(fn, delay) {
         let timeoutId;
         return function(...args) {
             clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                fn.apply(this, args);
-            }, delay);
+            timeoutId = setTimeout(() => fn.apply(this, args), delay);
         };
     }
-    async function searchBooks(searchTerm) {
-        let page=1;
-        let totalPages=1;
-        
-        if (!searchTerm) {
-            errorDiv.classList.add('hidden');
-            return;
-        }
-        
-        do{
-            const response=await fetch(`/api/student/search?searchTerm=${searchTerm}&page=${page}`);
-            const data = await response.json();
-            allBooks =data.items.items;
-            console.log(allBooks);
-            if (allBooks.length === 0) {
-                errorText.textContent = "We couldn't find any books matching your search. Please try different keywords.";
-                errorDiv.classList.remove('hidden');
-            } else {
-                errorDiv.classList.add('hidden');
-            }
-            totalPages = data.items.totalPages;
-            page++;
-            renderBooks(booksContainer, allBooks,page>2);
-        }while(page<=totalPages);
-    }
-    searchInput.addEventListener('input', debounce((event) => {
-        if(event.target.value.length > 0) {
-            searchBooks(event.target.value);
-            return;
-        }
-        loadAllBooks();
+
+    // Handle search input
+    searchInput.addEventListener('input', debounce((e) => {
+        currentTerm = e.target.value.trim();
+        currentPage = 1;
+        totalPages = 1;
+        booksContainer.innerHTML = '';
+
+        fetchBooks(currentTerm, currentPage);
     }, 500));
-    
+
+    // Infinite scroll / lazy load
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+            if (!isLoading && currentPage <= totalPages) {
+                fetchBooks(currentTerm, currentPage + 1);
+                currentPage++;
+            }
+        }
+});
+
 </script>
 }
 
