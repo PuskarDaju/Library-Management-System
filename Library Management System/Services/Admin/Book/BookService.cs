@@ -82,15 +82,13 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         return newBooks;
     }
 
-    public async Task<PaginatedBook<Models.Book>> GetSearchedBook(string? searchString, int page = 1, int pageSize = 6)
+    public async Task<PaginatedBook<Models.Book>> GetSearchedBook(string searchString, int page = 1, int pageSize = 6)
     {
-        if (string.IsNullOrEmpty(searchString))
-            return await GetPaginatedBooks();
         
         var totalBooks = await _context.Books.Where(b => b.Book_Name.Contains(searchString)
                                                    || b.Author.Contains(searchString) 
                                                    || b.ISBN.Contains(searchString)
-                                                   || b.Category.Category_Name.Contains(searchString)
+                                                   ||(b.Category!=null && b.Category.Category_Name.Contains(searchString))
                                                    || b.Publisher.Contains(searchString)).CountAsync();
         
         var books = await _context.Books.Where(b => b.Book_Name.Contains(searchString)
