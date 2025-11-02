@@ -4,7 +4,6 @@
     ViewData["Title"] = "Library";
 }
 <div class="container mx-auto px-4 py-6">
-    <!-- Search Bar -->
     <div class="mb-8">
         <input 
             type="text" 
@@ -14,7 +13,6 @@
         />
     </div>
 
-    <!-- New Books Section -->
     <div class="mb-12">
         <h2 class="text-2xl font-bold text-gray-800 mb-4">New Arrivals</h2>
         <div id="newBooksContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -22,9 +20,12 @@
         </div>
     </div>
 
-    <!-- All Books Section -->
+
     <div class="mb-12">
         <h2 class="text-2xl font-bold text-gray-800 mb-4">All Books</h2>
+        <div id="loadBookError" class="hidden bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 p-4 rounded-md mt-2" role="alert">
+            <p class="font-medium" id="loadBookErrorText"></p>
+        </div>
         <div id="booksContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           
         </div>
@@ -36,6 +37,8 @@
     const booksContainer = document.getElementById('booksContainer');
     const newBooksContainer = document.getElementById('newBooksContainer');
     const searchInput = document.getElementById('searchInput');
+    const errorDiv = document.getElementById('loadBookError');
+    const errorText = document.getElementById('loadBookErrorText');
     function normalizeBook(book) {
         return {
             Book_id: book.Book_id || book.book_id,
@@ -57,7 +60,7 @@
             allBooks =data.items;
             totalPages = data.totalPages;
             page++;
-            renderBooks(booksContainer, allBooks,true);
+            renderBooks(booksContainer, allBooks,page>2);
             
         }while(page<=totalPages);
     }
@@ -66,9 +69,7 @@
        loadAllBooks();
     });
 
-
     
-
     function createBookCard(book) {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden flex flex-col';
@@ -100,13 +101,53 @@
             container.appendChild(createBookCard(book));
         });
     }
-
-
     const newestBooks = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
     renderBooks(newBooksContainer, newestBooks);
-    
-    
 
+    //function to debounce search input
+    //this is to prevent the search from being called every time a key is pressed
+    function debounce(fn, delay) {
+        let timeoutId;
+        return function(...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                fn.apply(this, args);
+            }, delay);
+        };
+    }
+    async function searchBooks(searchTerm) {
+        let page=1;
+        let totalPages=1;
+        
+        if (!searchTerm) {
+            errorDiv.classList.add('hidden');
+            return;
+        }
+        
+        do{
+            const response=await fetch(`/api/student/search?searchTerm=${searchTerm}&page=${page}`);
+            const data = await response.json();
+            allBooks =data.items.items;
+            console.log(allBooks);
+            if (allBooks.length === 0) {
+                errorText.textContent = "We couldn't find any books matching your search. Please try different keywords.";
+                errorDiv.classList.remove('hidden');
+            } else {
+                errorDiv.classList.add('hidden');
+            }
+            totalPages = data.items.totalPages;
+            page++;
+            renderBooks(booksContainer, allBooks,page>2);
+        }while(page<=totalPages);
+    }
+    searchInput.addEventListener('input', debounce((event) => {
+        if(event.target.value.length > 0) {
+            searchBooks(event.target.value);
+            return;
+        }
+        loadAllBooks();
+    }, 500));
+    
 </script>
 }
 

@@ -14,5 +14,16 @@ public class BookApiController(IBookService service):ControllerBase
         var paginatedBooks = await _service.GetPaginatedBooks(page==0?1:page, size==0?6:size);
         return Ok(paginatedBooks);
     }
+    [HttpGet("search")]
+    public async Task<IActionResult> Search(string? searchTerm,int page=1)
+    {
+        var books = await _service.GetSearchedBook(searchTerm,page);
+        return Ok(new
+        {
+            status = "success",
+            items = books
+        });
+
+    }
     
 }
