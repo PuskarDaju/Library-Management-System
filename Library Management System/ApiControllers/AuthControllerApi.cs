@@ -96,9 +96,9 @@ public class AuthControllerApi(IUserService userService,JwtService jwtService) :
         public IActionResult Logout()
         {
           
-            if (Request.Cookies.ContainsKey("jwt"))
+            if (Request.Cookies.ContainsKey("jwt_token"))
             {
-                Response.Cookies.Delete("jwt");
+                Response.Cookies.Delete("jwt_token");
             }
             return Ok(new { message = "Logged out successfully" });
         }
