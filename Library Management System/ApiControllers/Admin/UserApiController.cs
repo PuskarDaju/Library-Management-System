@@ -1,4 +1,3 @@
-
 using Library_Management_System.Enum;
 using Library_Management_System.Services.Admin.Exception;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +14,11 @@ public class UserApiController(IUserControlService userControlService):Controlle
 {
     private readonly IUserControlService _userControlService=userControlService;
     
+    /// <summary>
+    /// Upgrades the specified user to the Admin role.
+    /// </summary>
+    /// <param name="id">The identifier of the user to upgrade.</param>
+    /// <returns>An <see cref="IActionResult"/> that is a 200 response with a success status and message when the upgrade succeeds; otherwise a 500 response with an error status and message (the error message includes the user-not-found message when applicable).</returns>
     [HttpPatch("upgrade/{id}")]
     public async Task<IActionResult> UpgradeToAdmin(int id)
     {
@@ -43,6 +47,16 @@ public class UserApiController(IUserControlService userControlService):Controlle
         }
     }
 
+    /// <summary>
+    /// Downgrades the specified user to the student role.
+    /// </summary>
+    /// <param name="id">The identifier of the user to downgrade; must be greater than or equal to 1.</param>
+    /// <returns>
+    /// An IActionResult:
+    /// - `200 OK` with a success message when the downgrade succeeds.
+    /// - `400 Bad Request` when `id` is less than 1.
+    /// - `500 Internal Server Error` when the user is not found or the downgrade fails.
+    /// </returns>
     [HttpPatch("downgrade/{id}")]
     public async Task<IActionResult> DowngradeToStudent(int id)
     {
@@ -76,6 +90,15 @@ public class UserApiController(IUserControlService userControlService):Controlle
             );
         }
     }
+    /// <summary>
+    /// Blacklists a user by their identifier.
+    /// </summary>
+    /// <param name="id">The user identifier to blacklist; must be greater than or equal to 1.</param>
+    /// <returns>
+    /// `200 OK` with a success message when the user is blacklisted;
+    /// `400 Bad Request` if `id` is less than 1;
+    /// `500 Internal Server Error` with an error message if the user is not found or blacklisting fails.
+    /// </returns>
     [HttpPatch("blacklist/{id}")]
 
     [Authorize(Roles = "Admin")]

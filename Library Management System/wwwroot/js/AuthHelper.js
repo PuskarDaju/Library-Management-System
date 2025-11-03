@@ -1,8 +1,8 @@
 // authHelpers.js
 
 /**
- * Fetch and store the CSRF token from backend
- * Returns the token string
+ * Request the backend CSRF endpoint to refresh the CSRF cookie and return its value.
+ * @returns {string|null} The `XSRF-TOKEN` cookie value if available, `null` otherwise.
  */
  async function getCsrfToken() {
     try {
@@ -17,7 +17,9 @@
 }
 
 /**
- * Get a cookie value by name
+ * Retrieve the value of a cookie by name.
+ * @param {string} name - The cookie name to look up.
+ * @returns {string|null} The cookie value if found, `null` otherwise.
  */
  function getCookie(name) {
     const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -25,9 +27,12 @@
 }
 
 /**
- * Send a fetch request with JSON body, CSRF, and credentials
- * @param {string} url
- * @param {object} options fetch options (method, body, headers)
+ * Send an HTTP request using fetch while adding an X-CSRF-TOKEN header and including credentials.
+ *
+ * Merges any user-supplied headers with an `X-CSRF-TOKEN` header obtained from getCsrfToken and forces `credentials: 'include'`.
+ * @param {string} url - Request URL.
+ * @param {object} [options] - Fetch options (e.g., method, body, headers); provided headers will be merged with the CSRF header.
+ * @returns {Promise<Response>} The Response returned by fetch.
  */
  async function secureFetch(url, options = {}) {
     const csrfToken = await getCsrfToken();

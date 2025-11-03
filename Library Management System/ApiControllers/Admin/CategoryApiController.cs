@@ -1,4 +1,4 @@
-﻿using Library_Management_System.DTOs.Category;
+using Library_Management_System.DTOs.Category;
 using Library_Management_System.Enum;
 using Library_Management_System.Services.Admin.Category;
 using Microsoft.AspNetCore.Authorization;
@@ -17,6 +17,11 @@ public class CategoryApiController(ICategoryService service) : ControllerBase
         return null;
     }
 
+    /// <summary>
+    /// Creates a new category using the provided DTO.
+    /// </summary>
+    /// <param name="dto">DTO containing the category data; <see cref="CreateCategory.CategoryName"/> must be a non-empty string.</param>
+    /// <returns>An <see cref="IActionResult"/> representing the HTTP response: `BadRequest` if the category name is empty; `Conflict` if a category with the same name already exists; `Ok` when creation succeeds; `StatusCode(401)` on internal failure.</returns>
     [HttpPost]
     public async Task<IActionResult> Create(CreateCategory dto)
     {
@@ -54,6 +59,11 @@ public class CategoryApiController(ICategoryService service) : ControllerBase
 
     }
 
+    /// <summary>
+    /// Deletes the category identified by the specified id.
+    /// </summary>
+    /// <param name="id">The identifier of the category to delete.</param>
+    /// <returns>`200 OK` with a success payload when deletion succeeds; `400 Bad Request` with an error payload if the category does not exist; `500 Internal Server Error` with an error payload if deletion fails.</returns>
     [HttpDelete]
     public async Task<IActionResult> Delete(int id)
     {
@@ -78,6 +88,11 @@ public class CategoryApiController(ICategoryService service) : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Updates an existing category using the values in the provided UpdateCategory DTO.
+    /// </summary>
+    /// <param name="dto">Update payload containing the category identifier and the new values (including CategoryName).</param>
+    /// <returns>An IActionResult representing the outcome: `Conflict` with an error message if a category with the requested name already exists; `Ok` with a success message when the update succeeds; `500` with an error message for other failures.</returns>
     [HttpPut]
     public async Task<IActionResult> Update(UpdateCategory dto)
     {

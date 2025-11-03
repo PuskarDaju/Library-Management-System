@@ -1,5 +1,3 @@
-﻿
-
 using Library_Management_System.Data;
 using Library_Management_System.DTOs.User;
 using Library_Management_System.Enum;
@@ -13,6 +11,11 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
 {
     private  readonly ApplicationDbContext _context=dbContext;
 
+    /// <summary>
+    /// Creates a new student user from the provided registration data and persists it to the database.
+    /// </summary>
+    /// <param name="userDto">User registration data including full name, email, and plain-text password.</param>
+    /// <returns>A UserResponseDto containing the newly created user's Id, FullName, Email, and Role.</returns>
     public async Task<UserResponseDto> RegisterAsync(UserDto userDto)
     {
         // Hash the password
@@ -51,6 +54,11 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
 
     }
 
+    /// <summary>
+    /// Authenticates a user using the provided credentials and returns basic user information on success.
+    /// </summary>
+    /// <param name="loginDto">The user's login credentials (email and password).</param>
+    /// <returns>A <see cref="UserResponseDto"/> containing the user's Id, FullName, Email, and Role when credentials are valid; `null` if the user is not found or the password is incorrect.</returns>
     public async Task<UserResponseDto> LoginAsync(LoginDto loginDto)
     {
        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);

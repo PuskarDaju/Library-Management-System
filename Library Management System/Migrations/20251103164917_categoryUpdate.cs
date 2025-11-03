@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -8,7 +8,9 @@ namespace Library_Management_System.Migrations
     /// <inheritdoc />
     public partial class categoryUpdate : Migration
     {
-        /// <inheritdoc />
+        /// <summary>
+        /// Applies schema changes: drops the legacy Rent_logs table, renames columns across Users, Category, Books, and BookRequests to camelCase, adds CategoryId to Books and BookId/UserId to BookRequests, and creates the RentLogs table with a foreign key to Incomes and an index on IncomeId.
+        /// </summary>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -118,7 +120,12 @@ namespace Library_Management_System.Migrations
                 column: "IncomeId");
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Reverts the migration's schema changes, restoring original table names, column names, and removed columns.
+        /// </summary>
+        /// <remarks>
+        /// Drops the RentLogs table, removes the added foreign-key columns from Books and BookRequests, renames columns back to their original identifiers, and recreates the original Rent_logs table with its index and foreign key to Incomes.
+        /// </remarks>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

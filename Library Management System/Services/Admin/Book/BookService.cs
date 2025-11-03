@@ -10,6 +10,11 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
 {
     private readonly ApplicationDbContext _context = dbContext;
 
+    /// <summary>
+    /// Create and persist a new Book entity from the provided DTO.
+    /// </summary>
+    /// <param name="createBookDto">DTO containing data for the new book: BookName, Author, CategoryId, Quantity, Price, Publisher, ImageUrl, PublishDate, and optional Isbn.</param>
+    /// <returns>`true` if the book was saved to the database, `false` otherwise.</returns>
     public async Task<bool> CreateBookAsync(CreateBookDto createBookDto)
     {
         var book = new Models.Book
@@ -31,6 +36,11 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         return await _context.SaveChangesAsync() > 0;
     }
 
+    /// <summary>
+    /// Update an existing book record, optionally replace its stored image file, and persist the changes to the database.
+    /// </summary>
+    /// <param name="updateBookDto">Data transfer object containing the book identifier and fields to update.</param>
+    /// <returns>`true` if at least one database row was affected, `false` otherwise (including when the specified book is not found).</returns>
     public async Task<bool> UpdateBookAsync(UpdateBookDto updateBookDto)
     {
         var book = await GetBookAsync(updateBookDto.BookId);
@@ -76,12 +86,23 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         return book ?? throw new BookNotFoundException(id);
     }
 
+    /// <summary>
+    /// Retrieve the four most recently added books ordered from newest to oldest.
+    /// </summary>
+    /// <returns>A list containing up to four Book entities, ordered by descending BookId (newest first).</returns>
     public async Task<List<Models.Book>> GetNewBooks()
     {
         var newBooks = await _context.Books.OrderByDescending(b => b.BookId).Take(4).ToListAsync();
         return newBooks;
     }
 
+    /// <summary>
+    /// Searches books by matching the provided text against BookName, Author, Isbn, CategoryName, or Publisher and returns the specified page of results.
+    /// </summary>
+    /// <param name="searchString">Text to match against BookName, Author, Isbn, CategoryName, or Publisher.</param>
+    /// <param name="page">1-based page index to return.</param>
+    /// <param name="pageSize">Number of items per page.</param>
+    /// <returns>A PaginatedBook&lt;Models.Book&gt; containing the matching books for the requested page and pagination metadata.</returns>
     public async Task<PaginatedBook<Models.Book>> GetSearchedBook(string searchString, int page = 1, int pageSize = 6)
     {
         
@@ -110,6 +131,12 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         return await _context.Books.ToListAsync();
     }
 
+    /// <summary>
+    /// Retrieve a page of books ordered by book name and packaged with pagination metadata.
+    /// </summary>
+    /// <param name="page">1-based page index to retrieve.</param>
+    /// <param name="pageSize">Number of books per page.</param>
+    /// <returns>A PaginatedBook&lt;Models.Book&gt; containing the page of books, the current page, page size, total page count, and total item count.</returns>
     public async Task<PaginatedBook<Models.Book>> GetPaginatedBooks(int page=1,int pageSize=6)
     {
         var skip = (page - 1) * pageSize;
