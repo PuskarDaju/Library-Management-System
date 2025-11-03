@@ -7,6 +7,13 @@ namespace Library_Management_System.Helpers;
 
 public class JwtService(IConfiguration config)
 {
+    /// <summary>
+    /// Creates a signed JSON Web Token containing the subject and role claims using JWT settings from configuration.
+    /// </summary>
+    /// <param name="userId">The subject identifier to include in the token's `sub` claim.</param>
+    /// <param name="role">The role name to include in the token's role claim.</param>
+    /// <returns>A serialized JWT string signed with the configured secret and valid for 4 hours.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the configured JWT secret key is missing or shorter than 16 characters.</exception>
     public string GenerateToken(string userId, string role)
     {
         var secretKeyString = config["Jwt:SecretKey"];

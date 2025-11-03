@@ -1,4 +1,4 @@
-﻿using Library_Management_System.DTOs.User;
+using Library_Management_System.DTOs.User;
 using Library_Management_System.Helpers;
 using Library_Management_System.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +14,15 @@ public class AuthControllerApi(IUserService userService,JwtService jwtService) :
     private readonly JwtService _jwtService = jwtService ?? throw new ArgumentNullException(nameof(jwtService));
 
 
+    /// <summary>
+    /// Registers a new user account using the provided user data.
+    /// </summary>
+    /// <param name="dto">User data transfer object containing registration fields (including Password and ConfirmPassword).</param>
+    /// <returns>
+    /// An IActionResult representing the operation result:
+    /// - 400 Bad Request when the request body is invalid, the passwords do not match, or the email is already registered;
+    /// - 200 OK with a success message when registration completes.
+    /// </returns>
     [HttpPost("register")]
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] UserDto dto)
@@ -49,6 +58,16 @@ public class AuthControllerApi(IUserService userService,JwtService jwtService) :
             message = "Registration successful"
         });
     }
+    /// <summary>
+    /// Authenticates a user and, on success, issues a JWT and stores it in an HTTP-only secure cookie.
+    /// </summary>
+    /// <param name="dto">Login credentials (typically email/username and password).</param>
+    /// <returns>
+    /// An IActionResult containing:
+    /// - 200 OK with { status = "success", message = "Login successful", role = user.Role } and a cookie named "jwt_token" (HttpOnly, Secure, SameSite=Strict, expires in 4 hours) when authentication succeeds;
+    /// - 400 Bad Request with { status = "Invalid", message = "Invalid request body" } when the request model is invalid;
+    /// - 400 Bad Request with { status = "error", message = "Invalid credentials" } when authentication fails.
+    /// </returns>
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> LoginAsync([FromBody] LoginDto dto)
@@ -91,6 +110,10 @@ public class AuthControllerApi(IUserService userService,JwtService jwtService) :
         });
     }
     
+        /// <summary>
+        /// Removes the authentication cookie named "jwt" from the response if present and returns a logout confirmation.
+        /// </summary>
+        /// <returns>An <see cref="IActionResult"/> with HTTP 200 OK and a JSON object containing the message "Logged out successfully".</returns>
         [HttpPost("logout")]
         [Authorize] 
         public IActionResult Logout()
@@ -103,7 +126,6 @@ public class AuthControllerApi(IUserService userService,JwtService jwtService) :
             return Ok(new { message = "Logged out successfully" });
         }
 }
-
 
 
 

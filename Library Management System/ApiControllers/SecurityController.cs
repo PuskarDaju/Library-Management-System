@@ -7,6 +7,10 @@ namespace Library_Management_System.ApiControllers;
 [Route("api/security")]
 public class SecurityController(IAntiforgery antiforgery):Controller
 {
+    /// <summary>
+    /// Generates and stores an antiforgery token for the current request and exposes it to the client in a cookie named "XSRF-TOKEN".
+    /// </summary>
+    /// <returns>An HTTP 200 OK response containing a JSON message confirming the CSRF token was set.</returns>
     [HttpGet("csrf-token")]
     public IActionResult GetCsrfToken()
     {
