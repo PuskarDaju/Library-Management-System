@@ -38,7 +38,7 @@
             success: function(response) {
                 if(response.status === "success"){
                     if(response.role==="Admin"){
-                       Swal.fire(response);
+                       window.location.href="/Book";
                     }else if(response.role==="Student"){
                         window.location.href = "/Student";
                     }

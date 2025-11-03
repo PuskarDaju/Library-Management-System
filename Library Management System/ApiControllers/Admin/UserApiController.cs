@@ -1,4 +1,5 @@
 
+using Library_Management_System.Enum;
 using Library_Management_System.Services.Admin.Exception;
 using Microsoft.AspNetCore.Mvc;
 using Library_Management_System.Services.Admin.User;
@@ -8,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace Library_Management_System.ApiControllers.Admin;
 [Route("api/users")]
 [ApiController]
+[AutoValidateAntiforgeryToken]
+[Authorize(Roles = UserRoleEnum.Admin)]
 public class UserApiController(IUserControlService userControlService):ControllerBase
 {
     private readonly IUserControlService _userControlService=userControlService;
@@ -15,12 +18,6 @@ public class UserApiController(IUserControlService userControlService):Controlle
     [HttpPatch("upgrade/{id}")]
     public async Task<IActionResult> UpgradeToAdmin(int id)
     {
-        if (id == null)
-            return BadRequest(new
-            {
-                status = "Error",
-                message="Id cannot be null"
-            });
         try
         {
             if (await _userControlService.UpgradeToAdmin(id))
@@ -49,7 +46,7 @@ public class UserApiController(IUserControlService userControlService):Controlle
     [HttpPatch("downgrade/{id}")]
     public async Task<IActionResult> DowngradeToStudent(int id)
     {
-        if (id==null||id<1)
+        if (id<1)
             return BadRequest(new
             {
                 status = "Error",

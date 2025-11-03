@@ -64,7 +64,7 @@ public class AuthControllerApi(IUserService userService,JwtService jwtService) :
 
         var user = await _userService.LoginAsync(dto);
 
-        if (user != null)
+        if (user!=null)
         {
             // Generate JWT token
             var token = _jwtService.GenerateToken(user.Id.ToString(), user.Role);
@@ -81,7 +81,6 @@ public class AuthControllerApi(IUserService userService,JwtService jwtService) :
                 status = "success",
                 message = "Login successful",
                 role = user.Role,
-                token = token
             });
         }
 

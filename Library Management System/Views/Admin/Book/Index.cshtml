@@ -27,7 +27,7 @@
             </tr>
         </thead>
         <tbody class="divide-y divide-indigo-100">
-            @if (Model != null && Model.Any())
+            @if (Model.Any())
             {
                 var index = 1;
                 foreach (var book in Model)
@@ -69,7 +69,6 @@
 @section Scripts{
 <script>
     async function deleteBook(bookId) {
-        try {
             const result = await Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -82,36 +81,27 @@
 
             if (!result.isConfirmed) return;
 
-            const response = await fetch(`/api/book-api/Delete/${bookId}`, {
+            const response = await secureFetch(`/api/book-api/Delete/${bookId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) throw new Error('Failed to delete book.');
-
-            await Swal.fire({
-                icon: 'success',
-                title: 'Deleted!',
-                text: 'Book has been deleted.',
-                timer: 1500,
-                showConfirmButton: false
-            });
-
-            // Reload page or remove row from DOM for instant feedback
-            window.location.reload();
-        } catch (error) {
-            console.error(error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong! Please try again.',
-                timer: 2000,
-                showConfirmButton: false
-            });
-        }
+            },);
+            if(response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: 'Book has been deleted.',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                window.location.reload();
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong! Please try again.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
     }
 </script>
 }

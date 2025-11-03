@@ -22,7 +22,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @if (Model != null && Model.Any())
+                    @if (Model.Any())
                     {
                         var index = 1;
                         foreach (var category in Model)
@@ -73,16 +73,16 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result)=>{
                 if(result.isConfirmed){
-                    $.ajax({
-                        url:"/api/Category/Delete/"+id,
-                        method:"DELETE",
-                        success:function(response){
+                    let response=secureFetch("api/category-api/Delete/"+id,{
+                        method: 'DELETE'
+                    });
+                   
                             if(response.status==="success"){
                                 Swal.fire(
                                     "Deleted!",
                                     response.message,
                                 ).then(()=>{
-                                    window.location.href();
+                                    window.location.reload();
                                 });
                                 
                             }else{
@@ -93,17 +93,9 @@
                                 });
                             }
                             
-                        },
-                        error:function(xhr,status,error){
-                            Swal.fire(
-                                "Error!",
-                                error.messageg || "Something went wrong",
-                                "error"
-                            )
                         }
+                       
                     });
                 }
-            });
-        }
     </script>
 }

@@ -1,4 +1,5 @@
-﻿using Library_Management_System.Models;
+﻿using Library_Management_System.Enum;
+using Library_Management_System.Models;
 using Library_Management_System.Services.Admin.Book;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library_Management_System.ApiControllers.Student;
 [ApiController]
 [Route("api/student")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = UserRoleEnum.Student)]
 public class BookApiController(IBookService service):ControllerBase
 {
     private readonly IBookService _service=service ?? throw new ArgumentNullException(nameof(service));
@@ -31,7 +32,6 @@ public class BookApiController(IBookService service):ControllerBase
 
         books = await _service.GetSearchedBook(searchTerm, page);
             return Ok(books);
-
     }
     
 }

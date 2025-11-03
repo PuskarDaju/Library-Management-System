@@ -1,4 +1,5 @@
 ﻿using Library_Management_System.DTOs.Category;
+using Library_Management_System.Enum;
 using Library_Management_System.Services.Admin.Category;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ namespace Library_Management_System.ApiControllers.Admin;
 [Route("api/category-api/[action]/{id?}")]
 [ApiController]
 [AutoValidateAntiforgeryToken]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles =UserRoleEnum.Admin)]
 public class CategoryApiController(ICategoryService service) : ControllerBase
 {
     private readonly ICategoryService _service = service ?? throw new ArgumentNullException(nameof(service));

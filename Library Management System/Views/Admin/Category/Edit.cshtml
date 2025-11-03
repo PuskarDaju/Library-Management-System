@@ -42,16 +42,13 @@
         }
 
         try {
-            const response = await fetch('/api/category-api/update/@Model.Category_Id', {
+            const response = await secureFetch('/api/category-api/update/@Model.Category_Id', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify({
                     Category_Name: categoryName,
                     Category_Id: @Model.Category_Id,
-                })
-            });
+                }),
+                });
 
             const data = await response.json();
 

@@ -96,7 +96,6 @@ ViewData["Title"] = "Add Book";
 
 <script>
     $(document).ready(function () {
-
         $("#bookForm").on("submit", async(e)=> {
             e.preventDefault();
             let isValid = true;
@@ -106,7 +105,7 @@ ViewData["Title"] = "Add Book";
             console.log(category_id);
             if(category_id===0||category_id==="") {
                 const err = document.getElementById("CategoryIdError");
-                err.textContent('Category is required');
+                err.val='Category is required';
                 isValid = false;
                 return;
             }
@@ -124,7 +123,7 @@ ViewData["Title"] = "Add Book";
             const file=$("#Image")[0].files[0];
             if(file===undefined){
                 const err = document.getElementById("ImageError");
-                err.textContent('Image is required');
+                err.val="Image is required";
                 isValid = false;
                 return;
             }else{
@@ -157,9 +156,9 @@ ViewData["Title"] = "Add Book";
                             formData.append("PublishDate", $("#PublicationDate").val());
                             formData.append("Image", file);
 
-                            const response = await fetch("/api/book-api/create", {
+                            const response = await secureFetch("/api/book-api/create", {
                                 method: "POST",
-                                body: formData
+                                body: formData, // ✅ send as multipart/form-data
                             });
                             if (response.ok) {
                               Swal.fire({

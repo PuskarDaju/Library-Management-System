@@ -8,19 +8,12 @@ namespace Library_Management_System.ApiControllers.Admin;
 [ApiController]
 [Route("api/book-api/[action]")]
 [Authorize(Roles = "Admin")]
+[AutoValidateAntiforgeryToken]
 public class BookApiController(IBookService service) :ControllerBase {
-    private readonly IBookService _service=service;
     [HttpPost]
     
-    public async Task<IActionResult> Create( CreateBookDto dto) {
-        if (dto == null)
-            return BadRequest(new
-            {
-                status = "error",
-                message = "Book object is null"
-            });
+    public async Task<IActionResult> Create(CreateBookDto dto) {
         
-
         if (string.IsNullOrEmpty(dto.BookName))
                 return BadRequest(new
                 {
@@ -47,12 +40,6 @@ public class BookApiController(IBookService service) :ControllerBase {
                 status = "error",
                 message = "select a valid category",
             });
-        if (dto.Image == null)
-            return BadRequest(new
-            {
-                status = "error",
-                message = "Image is Required"
-            });
         
         var validExtension = new List<string> { ".jpg", ".jpeg", ".png", "webp" };
         var extension=Path.GetExtension(dto.Image.FileName).ToLower();
@@ -64,25 +51,25 @@ public class BookApiController(IBookService service) :ControllerBase {
                 message = "Only JPG, JPEG, and WEBP image formats are allowed"
             });
         
-        if (dto.Image.Length > 2 * 1024 * 1024)
+        if (dto.Image.Length is > 2 * 1024 * 1024 or 0)
             return BadRequest(new
             {
                 status = "error",
-                message = "Image size must not exceed 2MB"
+                message = "Image must be a valid and no more than 2mb"
             });
         
         var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Images/Books");
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
-        var uniqueFileName = Guid.NewGuid().ToString() + extension;
+        var uniqueFileName = Guid.NewGuid() + extension;
         var filePath = Path.Combine(path, uniqueFileName);
         await using (var stream = new FileStream(filePath, FileMode.Create))
         {
-            await dto.Image.CopyToAsync(stream);  // <-- Missing line added here
+            await dto.Image.CopyToAsync(stream); 
         }
         dto.ImageUrl ="/Images/Books/"+uniqueFileName;
         
-        if (await _service.CreateBookAsync(dto))
+        if (await service.CreateBookAsync(dto))
         {
             return Ok(new
             {
@@ -135,7 +122,6 @@ public class BookApiController(IBookService service) :ControllerBase {
             });
         if (dto.Image != null)
         {
-
             var validExtension = new List<string> { ".jpg", ".jpeg", ".png", "webp" };
             var extension = Path.GetExtension(dto.Image.FileName).ToLower();
             if (!validExtension.Contains(extension))
@@ -155,7 +141,7 @@ public class BookApiController(IBookService service) :ControllerBase {
             dto.ImageUrl = "/Images/Books/" + uniqueFileName;
         }
 
-        if (await _service.UpdateBookAsync(dto))
+        if (await service.UpdateBookAsync(dto))
             return Ok(new
             {
                 status = "success",
@@ -172,13 +158,13 @@ public class BookApiController(IBookService service) :ControllerBase {
     [Route("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (id == null || id < 1)
+        if (id < 1)
             return BadRequest(new
             {
                 status = "error",
                 message = "Invalid book id"
             });
-        if (await _service.DeleteBookAsync(id))
+        if (await service.DeleteBookAsync(id))
             return Ok(new
             {
                 status = "success",
@@ -190,6 +176,4 @@ public class BookApiController(IBookService service) :ControllerBase {
             message = "Internal Server Error just to check"
         });
     }
-
-    
 }
