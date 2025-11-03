@@ -10,5 +10,5 @@ public class Category
     
     //relations
     //one category has many books
-    public List<Book> Books { get; set; }=new List<Book>();
+    public List<Book> Books { get; set; }= [];
 }

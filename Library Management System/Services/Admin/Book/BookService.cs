@@ -15,7 +15,7 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         var book = new Models.Book
         {
             Author = createBookDto.Author,
-            Category_Id = createBookDto.CategoryId,
+            CategoryId = createBookDto.CategoryId,
             BookName = createBookDto.BookName,
             Quantity = createBookDto.Quantity,
             Price = createBookDto.Price,
@@ -45,7 +45,7 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
 
         book.Author = updateBookDto.Author;
         book.BookId = updateBookDto.BookId;
-        book.Category_Id = updateBookDto.CategoryId;
+        book.CategoryId = updateBookDto.CategoryId;
         book.BookName = updateBookDto.BookName;
         book.Quantity = updateBookDto.Quantity;
         book.Price = updateBookDto.Price;

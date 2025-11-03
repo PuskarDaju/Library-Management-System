@@ -12,14 +12,14 @@ public class Book
     public string Publisher { get; set; }
     public string Isbn { get; set; }
     public string? ImageUrl { get; set; }
-    public int Category_Id { get; set; }
+    public int CategoryId { get; set; }
     public float Price { get; set; }
     public DateOnly? PublicationDate { get; set; }
     public int Quantity { get; set; }
     
     //relations
     //one book belongs to one category
-    [ForeignKey("Category_Id")]
+    [ForeignKey("CategoryId")]
     public Category Category { get; set; }
 }
 

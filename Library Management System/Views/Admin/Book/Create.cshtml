@@ -105,7 +105,7 @@ ViewData["Title"] = "Add Book";
             console.log(category_id);
             if(category_id===0||category_id==="") {
                 const err = document.getElementById("CategoryIdError");
-                err.val='Category is required';
+                err.textContent='Category is required';
                 isValid = false;
                 return;
             }
@@ -123,7 +123,7 @@ ViewData["Title"] = "Add Book";
             const file=$("#Image")[0].files[0];
             if(file===undefined){
                 const err = document.getElementById("ImageError");
-                err.val="Image is required";
+                err.textContent="Image is required";
                 isValid = false;
                 return;
             }else{

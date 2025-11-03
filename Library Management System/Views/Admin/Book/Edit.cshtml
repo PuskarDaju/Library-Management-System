@@ -49,7 +49,7 @@
 
                                 @foreach (var category in Model.Categories)
                                 {
-                                    if (category.CategoryId == Model.Book.Category_Id)
+                                    if (category.CategoryId == Model.Book.CategoryId)
                                     {
                                         <option value="@category.CategoryId" selected="selected">@category.CategoryName</option>
                                     }
