@@ -14,7 +14,7 @@
                     <form id="bookForm">
                         <div class="mb-3">
                             <label for="BookName" class="form-label">Book Name</label>
-                            <input type="text" class="form-control" id="BookName" name="book_name" placeholder="Enter book name" value="@Model.Book.Book_Name" required />
+                            <input type="text" class="form-control" id="BookName" name="book_name" placeholder="Enter book name" value="@Model.Book.BookName" required />
                             <span class="text-danger small" id="BookNameError"></span>
                         </div>
 
@@ -35,7 +35,7 @@
                         <!-- ISBN -->
                         <div class="mb-3">
                             <label for="ISBN" class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="ISBN" name="isbn" placeholder="Enter ISBN number" value="@Model.Book.ISBN" required />
+                            <input type="text" class="form-control" id="ISBN" name="isbn" placeholder="Enter ISBN number" value="@Model.Book.Isbn" required />
                             <span class="text-danger small" id="ISBNError"></span>
                         </div>
 
@@ -43,22 +43,22 @@
                         <div class="mb-3">
                             <label for="CategoryId" class="form-label">Category</label>
                             <select class="form-select" id="CategoryId" name="category_id" required>
+
                                 <option value="">Select a category</option>
-                               
+
+
                                 @foreach (var category in Model.Categories)
                                 {
-                                    if (category.Category_Id == Model.Book.Category_Id)
+                                    if (category.CategoryId == Model.Book.CategoryId)
                                     {
-                                        <option value="@category.Category_Id" selected>@category.Category_Name</option>
+                                        <option value="@category.CategoryId" selected="selected">@category.CategoryName</option>
                                     }
                                     else
                                     {
-                                        <option value="@category.Category_Id">@category.Category_Name</option>
+                                        <option value="@category.CategoryId">@category.CategoryName</option>
                                     }
                                 }
                             </select>
-
-                            <span class="text-danger small" id="CategoryIdError"></span>
                         </div>
 
                         <!-- Price -->
@@ -72,7 +72,7 @@
                         <div class="mb-3">
                             <label for="PublicationDate" class="form-label">Publication Date</label>
                             <input type="date" class="form-control" id="PublicationDate" name="publication_date"
-                                   value="@(Model.Book.publication_Date.HasValue ? Model.Book.publication_Date.Value.ToString("yyyy-MM-dd") : "")"
+                                   value="@(Model.Book.PublicationDate.HasValue ? Model.Book.PublicationDate.Value.ToString("yyyy-MM-dd") : "")"
                                    required />
                             <span class="text-danger small" id="PublicationDateError"></span>
                         </div>
@@ -90,7 +90,7 @@
                                 <p class="text-muted mb-1">Current Image Preview:</p>
                                 <div class="border rounded p-2 d-inline-block bg-light">
                                     <img id="oldImagePreview" 
-                                         src="@Model.Book.Image_Url" 
+                                         src="@Model.Book.ImageUrl" 
                                          alt="Book Image" 
                                          class="img-thumbnail" 
                                          style="max-width: 180px; height: auto;" />
@@ -123,7 +123,7 @@ $(document).ready(function () {
         let isValid = true;
 
         $("span.text-danger").text("");
-        var category_id = document.getElementById("CategoryId").value;
+        let category_id = document.getElementById("CategoryId").value;
 
         if (category_id === "" || category_id === null) {
             $("#CategoryIdError").text("Category is required");
@@ -142,7 +142,7 @@ $(document).ready(function () {
             }
         });
         let file=null;
-        if($('#image')!=null) {
+        if($('#Image')[0].files.length>0) {
              file = $("#Image")[0].files[0];
                 const allowedExtensions = ['image/jpg', 'image/jpeg', 'image/png', "image/webp"];
                 if (!allowedExtensions.includes(file.type) || file.size > 2 * 1024 * 1024) {
@@ -160,7 +160,7 @@ $(document).ready(function () {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const bookId = @Model.Book.Book_id;
+                        const bookId = @Model.Book.BookId;
                         const formData = new FormData();
                         formData.append("BookId", bookId);
                         formData.append("CategoryId", category_id);
@@ -174,8 +174,7 @@ $(document).ready(function () {
                         if(file!=null) {
                             formData.append("Image", file);
                         }
-                        
-                        const response = await fetch(`/api/book-api/update`,{
+                        const response = await secureFetch(`/api/book-api/update`,{
                             method: 'PUT',
                             body: formData,
                         });

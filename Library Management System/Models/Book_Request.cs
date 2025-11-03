@@ -3,16 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library_Management_System.Models;
 
-public class Book_Request
+public class BookRequest
 {
     [Key]
-    public int Book_request_id { get; set; }
+    public int BookRequestId { get; set; }
     [Required]
-    public string Request_type { get; set; }
+    public string RequestType { get; set; }
     [Required]
-    public int User_id { get; set; }
+    public int UserId { get; set; }
     [Required]
-    public int Book_id { get; set; }
+    public int BookId { get; set; }
 
    [ForeignKey("Book_id")]
    public Book Book { get; set; }

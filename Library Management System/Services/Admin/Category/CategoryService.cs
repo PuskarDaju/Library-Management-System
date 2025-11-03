@@ -1,4 +1,4 @@
-﻿using Library_Management_System.Data;
+using Library_Management_System.Data;
 using Library_Management_System.DTOs.Category;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,11 +10,16 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
     private readonly ApplicationDbContext _dbContext=dbContext;
    
     
+    /// <summary>
+    /// Creates a new category from the provided DTO and persists it to the database.
+    /// </summary>
+    /// <param name="dto">DTO containing the CategoryName for the new category.</param>
+    /// <returns>`true` if the category was saved to the database, `false` otherwise.</returns>
     public async Task<bool> CreateCategoryAsync(CreateCategory dto)
     {
         Models.Category category = new Models.Category
         {
-            Category_Name = dto.Category_Name,
+            CategoryName = dto.CategoryName,
         };
         await _dbContext.Category.AddAsync(category);
         return await _dbContext.SaveChangesAsync() > 0;
@@ -25,12 +30,22 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
         Models.Category? category = await _dbContext.Category.FindAsync(categoryId);
         return category ?? null;
     }
+    /// <summary>
+    /// Determines whether a category with the specified name exists.
+    /// </summary>
+    /// <param name="categoryName">The category name to match.</param>
+    /// <returns>`true` if a category with the specified name exists, `false` otherwise.</returns>
     public async Task<bool> GetCategoryByNameAsync(string categoryName)
     {
         return await _dbContext.Category
-            .AnyAsync(c => c.Category_Name == categoryName);
+            .AnyAsync(c => c.CategoryName == categoryName);
     }
 
+    /// <summary>
+    /// Deletes the category with the specified ID from the database.
+    /// </summary>
+    /// <param name="categoryId">The primary key of the category to delete.</param>
+    /// <returns>`true` if a category was found and deleted, `false` if no category with the given ID exists.</returns>
     public async Task<bool> DeleteCategoryByIdAsync(int categoryId)
     {
         var category =await GetCategoryByIdAsync(categoryId);
@@ -41,11 +56,16 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
 
     }
 
+    /// <summary>
+    /// Updates the name of an existing category identified by the DTO's CategoryId.
+    /// </summary>
+    /// <param name="dto">An UpdateCategory DTO containing the target CategoryId and the new CategoryName.</param>
+    /// <returns>`true` if the category was found and updated, `false` if no category with the specified ID exists.</returns>
     public async Task<bool> UpdateCategoryByIdAsync(UpdateCategory dto)
     {
-        var category = await GetCategoryByIdAsync(dto.Category_id);
+        var category = await GetCategoryByIdAsync(dto.CategoryId);
         if(category==null) return false;
-        category.Category_Name = dto.Category_Name;
+        category.CategoryName = dto.CategoryName;
         await _dbContext.SaveChangesAsync();
         return true;
     }

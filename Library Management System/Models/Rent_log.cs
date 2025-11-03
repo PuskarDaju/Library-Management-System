@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library_Management_System.Models;
 
-public class Rent_log
+public class RentLog
 {
     [Key]
     public int RentLogId { get; set; }

@@ -1,9 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management_System.Controllers;
 
+[AllowAnonymous]
 public class HomeController : Controller
 {
+    /// <summary>
+    /// Displays the login view.
+    /// </summary>
+    /// <returns>A view result that renders the "Login" view.</returns>
     public IActionResult Index()
     {
         return View("Login");

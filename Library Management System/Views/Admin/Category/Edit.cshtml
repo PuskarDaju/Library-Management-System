@@ -14,7 +14,7 @@
                     <form id="categoryForm">
                         <div class="mb-3">
                             <label for="CategoryName" class="form-label">Category Name</label>
-                            <input type="text" class="form-control" id="CategoryName" name="Category_Name" value="@Model.Category_Name" required />
+                            <input type="text" class="form-control" id="CategoryName" name="Category_Name" value="@Model.CategoryName" required />
                         </div>
 
                         <button type="submit" class="btn btn-success w-100">Update Category</button>
@@ -42,16 +42,14 @@
         }
 
         try {
-            const response = await fetch('/api/category-api/update/@Model.Category_Id', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+            const response = await secureFetch('/api/category-api/update', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    Category_Name: categoryName,
-                    Category_Id: @Model.Category_Id,
-                })
-            });
+                    "CategoryName": categoryName,
+                    "CategoryId": @Model.CategoryId,
+                }),
+                });
 
             const data = await response.json();
 

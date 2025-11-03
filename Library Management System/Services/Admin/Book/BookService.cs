@@ -10,53 +10,63 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
 {
     private readonly ApplicationDbContext _context = dbContext;
 
+    /// <summary>
+    /// Create and persist a new Book entity from the provided DTO.
+    /// </summary>
+    /// <param name="createBookDto">DTO containing data for the new book: BookName, Author, CategoryId, Quantity, Price, Publisher, ImageUrl, PublishDate, and optional Isbn.</param>
+    /// <returns>`true` if the book was saved to the database, `false` otherwise.</returns>
     public async Task<bool> CreateBookAsync(CreateBookDto createBookDto)
     {
         var book = new Models.Book
         {
             Author = createBookDto.Author,
-            Category_Id = createBookDto.CategoryId,
-            Book_Name = createBookDto.BookName,
+            CategoryId = createBookDto.CategoryId,
+            BookName = createBookDto.BookName,
             Quantity = createBookDto.Quantity,
             Price = createBookDto.Price,
             Publisher = createBookDto.Publisher,
-            Image_Url = createBookDto.ImageUrl,
-            publication_Date = createBookDto.PublishDate
+            ImageUrl = createBookDto.ImageUrl,
+            PublicationDate = createBookDto.PublishDate
         };
         if (!string.IsNullOrEmpty(createBookDto.Author))
             book.Author = createBookDto.Author;
-        if (!string.IsNullOrEmpty(createBookDto.ISBN))
-            book.ISBN = createBookDto.ISBN;
+        if (!string.IsNullOrEmpty(createBookDto.Isbn))
+            book.Isbn = createBookDto.Isbn;
         _context.Books.Add(book);
         return await _context.SaveChangesAsync() > 0;
     }
 
+    /// <summary>
+    /// Update an existing book record, optionally replace its stored image file, and persist the changes to the database.
+    /// </summary>
+    /// <param name="updateBookDto">Data transfer object containing the book identifier and fields to update.</param>
+    /// <returns>`true` if at least one database row was affected, `false` otherwise (including when the specified book is not found).</returns>
     public async Task<bool> UpdateBookAsync(UpdateBookDto updateBookDto)
     {
         var book = await GetBookAsync(updateBookDto.BookId);
         if (book == null) return false;
         //here it must have a try catch
-        if (book.Image_Url != null)
+        if (updateBookDto.ImageUrl != null && !string.IsNullOrEmpty(book.ImageUrl))
         {
-            var oldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", book.Image_Url.TrimStart('/'));
+            var oldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", book.ImageUrl.TrimStart('/'));
             if (File.Exists(oldImage))
                 File.Delete(oldImage);
         }
 
         book.Author = updateBookDto.Author;
-        book.Book_id = updateBookDto.BookId;
-        book.Category_Id = updateBookDto.CategoryId;
-        book.Book_Name = updateBookDto.BookName;
+        book.BookId = updateBookDto.BookId;
+        book.CategoryId = updateBookDto.CategoryId;
+        book.BookName = updateBookDto.BookName;
         book.Quantity = updateBookDto.Quantity;
         book.Price = updateBookDto.Price;
         if(updateBookDto.ImageUrl!=null)
-            book.Image_Url = updateBookDto.ImageUrl;
+            book.ImageUrl = updateBookDto.ImageUrl;
         book.Publisher = updateBookDto.Publisher;
         if (!string.IsNullOrEmpty(updateBookDto.Author))
             book.Author = updateBookDto.Author;
-        if (!string.IsNullOrEmpty(updateBookDto.ISBN))
-            book.ISBN = updateBookDto.ISBN;
-        book.publication_Date = updateBookDto.PublishDate;
+        if (!string.IsNullOrEmpty(updateBookDto.Isbn))
+            book.Isbn = updateBookDto.Isbn;
+        book.PublicationDate = updateBookDto.PublishDate;
         _context.Books.Update(book);
         return await _context.SaveChangesAsync() > 0;
     }
@@ -76,27 +86,38 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         return book ?? throw new BookNotFoundException(id);
     }
 
+    /// <summary>
+    /// Retrieve the four most recently added books ordered from newest to oldest.
+    /// </summary>
+    /// <returns>A list containing up to four Book entities, ordered by descending BookId (newest first).</returns>
     public async Task<List<Models.Book>> GetNewBooks()
     {
-        var newBooks = await _context.Books.OrderByDescending(b => b.Book_id).Take(4).ToListAsync();
+        var newBooks = await _context.Books.OrderByDescending(b => b.BookId).Take(4).ToListAsync();
         return newBooks;
     }
 
+    /// <summary>
+    /// Searches books by matching the provided text against BookName, Author, Isbn, CategoryName, or Publisher and returns the specified page of results.
+    /// </summary>
+    /// <param name="searchString">Text to match against BookName, Author, Isbn, CategoryName, or Publisher.</param>
+    /// <param name="page">1-based page index to return.</param>
+    /// <param name="pageSize">Number of items per page.</param>
+    /// <returns>A PaginatedBook&lt;Models.Book&gt; containing the matching books for the requested page and pagination metadata.</returns>
     public async Task<PaginatedBook<Models.Book>> GetSearchedBook(string searchString, int page = 1, int pageSize = 6)
     {
         
-        var totalBooks = await _context.Books.Where(b => b.Book_Name.Contains(searchString)
+        var totalBooks = await _context.Books.Where(b => b.BookName.Contains(searchString)
                                                    || b.Author.Contains(searchString) 
-                                                   || b.ISBN.Contains(searchString)
-                                                   ||(b.Category!=null && b.Category.Category_Name.Contains(searchString))
+                                                   || b.Isbn.Contains(searchString)
+                                                   ||(b.Category!=null && b.Category.CategoryName.Contains(searchString))
                                                    || b.Publisher.Contains(searchString)).CountAsync();
         
-        var books = await _context.Books.Where(b => b.Book_Name.Contains(searchString)
+        var books = await _context.Books.Where(b => b.BookName.Contains(searchString)
                                                             || b.Author.Contains(searchString)
-                                                            || b.ISBN.Contains(searchString)
-                                                            || b.Category.Category_Name.Contains(searchString)
+                                                            || b.Isbn.Contains(searchString)
+                                                            || b.Category.CategoryName.Contains(searchString)
                                                             || b.Publisher.Contains(searchString))
-            .OrderBy(b => b.Book_Name)
+            .OrderBy(b => b.BookName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -110,13 +131,19 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         return await _context.Books.ToListAsync();
     }
 
+    /// <summary>
+    /// Retrieve a page of books ordered by book name and packaged with pagination metadata.
+    /// </summary>
+    /// <param name="page">1-based page index to retrieve.</param>
+    /// <param name="pageSize">Number of books per page.</param>
+    /// <returns>A PaginatedBook&lt;Models.Book&gt; containing the page of books, the current page, page size, total page count, and total item count.</returns>
     public async Task<PaginatedBook<Models.Book>> GetPaginatedBooks(int page=1,int pageSize=6)
     {
         var skip = (page - 1) * pageSize;
         var totalBooks = await _context.Books.CountAsync();
 
         var books = await _context.Books
-            .OrderBy(b => b.Book_Name)
+            .OrderBy(b => b.BookName)
             .Skip(skip)
             .Take(pageSize)
             .ToListAsync();

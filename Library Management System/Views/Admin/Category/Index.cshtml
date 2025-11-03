@@ -22,24 +22,24 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @if (Model != null && Model.Any())
+                    @if (Model.Any())
                     {
                         var index = 1;
                         foreach (var category in Model)
                         {
                             <tr id="tableRow" class="transition duration-200">
                                 <td class="py-3 px-5 text-sm text-gray-700">@index</td>
-                                <td class="py-3 px-5 text-sm text-gray-700">@category.Category_Name</td>
+                                <td class="py-3 px-5 text-sm text-gray-700">@category.CategoryName</td>
                                     
                                 <td class="py-3 px-5 text-sm text-gray-700">
                                     <div class="flex items-center gap-2">
-                                        <a href="@Url.Action("Edit", "Category", new { id = category.Category_Id })" 
+                                        <a href="@Url.Action("Edit", "Category", new { id = category.CategoryId })" 
                                            class="px-3 py-1 bg-yellow-400 text-white rounded-lg shadow hover:bg-yellow-500 transition">
                                             <i class="bi bi-pencil-square"></i> Edit
                                         </a>
                                         <button type="button" 
                                                 class="px-3 py-1 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition"
-                                                onclick="deleteCategory(@category.Category_Id)">
+                                                onclick="deleteCategory(@category.CategoryId)">
                                             <i class="bi bi-trash-fill"></i> Delete
                                         </button>
                                     </div>
@@ -73,37 +73,31 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result)=>{
                 if(result.isConfirmed){
-                    $.ajax({
-                        url:"/api/Category/Delete/"+id,
-                        method:"DELETE",
-                        success:function(response){
-                            if(response.status==="success"){
-                                Swal.fire(
-                                    "Deleted!",
-                                    response.message,
-                                ).then(()=>{
-                                    window.location.href();
-                                });
-                                
-                            }else{
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: response.message,
-                                });
-                            }
-                            
-                        },
-                        error:function(xhr,status,error){
+                    (async () => {
+                        let response= await secureFetch("api/category-api/Delete/"+id,{
+                            method: 'DELETE'
+                        });
+
+                        if(response.ok){
                             Swal.fire(
-                                "Error!",
-                                error.messageg || "Something went wrong",
-                                "error"
-                            )
+                                "Deleted!",
+                                response.message,
+                            ).then(()=>{
+                                window.location.reload();
+                            });
+
+                        }else{
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: response.message,
+                            });
                         }
+                    })();
+                            
+                        }
+                       
                     });
                 }
-            });
-        }
     </script>
 }

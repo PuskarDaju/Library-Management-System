@@ -27,9 +27,9 @@
 
 @section Scripts{
 <script>
+
     const form = document.getElementById('categoryForm');
     const messageDiv = document.getElementById('message');
-
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -41,11 +41,8 @@
         }
 
         try {
-            const response = await fetch('/api/category-api/create', {
+            const response = await secureFetch('/api/category-api/create', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify({ Category_Name: categoryName })
             });
 

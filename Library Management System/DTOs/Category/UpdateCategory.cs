@@ -2,5 +2,5 @@
 
 public class UpdateCategory: CreateCategory
 {
-   public int Category_id { get; set; } 
+   public int CategoryId { get; set; } 
 }
