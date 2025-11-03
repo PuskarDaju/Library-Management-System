@@ -11,9 +11,15 @@ public class JwtService(IConfiguration config)
     {
         var secretKeyString = config["Jwt:SecretKey"];
 
-        if (string.IsNullOrEmpty(secretKeyString) || secretKeyString.Length < 16)
-            throw new InvalidOperationException("JWT SecretKey is missing or too short (minimum 16 characters).");
+        if (string.IsNullOrEmpty(secretKeyString) || secretKeyString.Length < 32)
+            throw new InvalidOperationException("JWT SecretKey is missing or too short (minimum 32 characters).");
 
+        var issuer = config["Jwt:Issuer"];
+        var audience = config["Jwt:Audience"];
+        if (string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience))
+        {
+            throw new InvalidOperationException("JWT Issuer and Audience are missing or not set.");
+        }
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKeyString));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -24,8 +30,8 @@ public class JwtService(IConfiguration config)
         };
 
         var token = new JwtSecurityToken(
-            issuer: config["Jwt:Issuer"],
-            audience: config["Jwt:Audience"],
+            issuer: issuer,
+            audience: audience,
             claims: claims,
             expires: DateTime.UtcNow.AddHours(4),
             signingCredentials: creds
