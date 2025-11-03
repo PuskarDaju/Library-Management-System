@@ -36,7 +36,7 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         var book = await GetBookAsync(updateBookDto.BookId);
         if (book == null) return false;
         //here it must have a try catch
-        if (book.ImageUrl != null)
+        if (updateBookDto.ImageUrl != null && !string.IsNullOrEmpty(book.ImageUrl))
         {
             var oldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", book.ImageUrl.TrimStart('/'));
             if (File.Exists(oldImage))
