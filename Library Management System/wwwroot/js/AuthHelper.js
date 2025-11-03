@@ -31,11 +31,9 @@
  * @param {object} options fetch options (method, body, headers)
  */
  async function secureFetch(url, options = {}) {
-    const isFormData = options.body instanceof FormData;
     const csrfToken = await getCsrfToken();
 
     const defaultHeaders = {
-        'Content-Type': isFormData ? 'multipart/form-data' : 'multipart/form-data',
         'X-CSRF-TOKEN': csrfToken
     };
 

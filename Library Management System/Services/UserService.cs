@@ -20,9 +20,9 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
 
         var user = new User
         {
-            Full_Name = userDto.FullName,
+            FullName = userDto.FullName,
             Email = userDto.Email,
-            Password_Hash = hashedPassword,
+            PasswordHash = hashedPassword,
             Role=UserRoleEnum.Student
         };
 
@@ -32,7 +32,7 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
         return new UserResponseDto
         {
             Id = user.Id,
-            FullName = user.Full_Name,
+            FullName = user.FullName,
             Email = user.Email,
             Role = user.Role
         };
@@ -59,14 +59,14 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
             return null;
         }
 
-        if (!PasswordHelper.VerifyPassword(loginDto.Password, user.Password_Hash))
+        if (!PasswordHelper.VerifyPassword(loginDto.Password, user.PasswordHash))
         {
             return null;
         }
         UserResponseDto userResponse=new UserResponseDto
         {
             Id = user.Id,
-            FullName = user.Full_Name,
+            FullName = user.FullName,
             Email = user.Email,
             Role = user.Role
         };

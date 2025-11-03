@@ -16,17 +16,17 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         {
             Author = createBookDto.Author,
             Category_Id = createBookDto.CategoryId,
-            Book_Name = createBookDto.BookName,
+            BookName = createBookDto.BookName,
             Quantity = createBookDto.Quantity,
             Price = createBookDto.Price,
             Publisher = createBookDto.Publisher,
-            Image_Url = createBookDto.ImageUrl,
-            publication_Date = createBookDto.PublishDate
+            ImageUrl = createBookDto.ImageUrl,
+            PublicationDate = createBookDto.PublishDate
         };
         if (!string.IsNullOrEmpty(createBookDto.Author))
             book.Author = createBookDto.Author;
-        if (!string.IsNullOrEmpty(createBookDto.ISBN))
-            book.ISBN = createBookDto.ISBN;
+        if (!string.IsNullOrEmpty(createBookDto.Isbn))
+            book.Isbn = createBookDto.Isbn;
         _context.Books.Add(book);
         return await _context.SaveChangesAsync() > 0;
     }
@@ -36,27 +36,27 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         var book = await GetBookAsync(updateBookDto.BookId);
         if (book == null) return false;
         //here it must have a try catch
-        if (book.Image_Url != null)
+        if (book.ImageUrl != null)
         {
-            var oldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", book.Image_Url.TrimStart('/'));
+            var oldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", book.ImageUrl.TrimStart('/'));
             if (File.Exists(oldImage))
                 File.Delete(oldImage);
         }
 
         book.Author = updateBookDto.Author;
-        book.Book_id = updateBookDto.BookId;
+        book.BookId = updateBookDto.BookId;
         book.Category_Id = updateBookDto.CategoryId;
-        book.Book_Name = updateBookDto.BookName;
+        book.BookName = updateBookDto.BookName;
         book.Quantity = updateBookDto.Quantity;
         book.Price = updateBookDto.Price;
         if(updateBookDto.ImageUrl!=null)
-            book.Image_Url = updateBookDto.ImageUrl;
+            book.ImageUrl = updateBookDto.ImageUrl;
         book.Publisher = updateBookDto.Publisher;
         if (!string.IsNullOrEmpty(updateBookDto.Author))
             book.Author = updateBookDto.Author;
-        if (!string.IsNullOrEmpty(updateBookDto.ISBN))
-            book.ISBN = updateBookDto.ISBN;
-        book.publication_Date = updateBookDto.PublishDate;
+        if (!string.IsNullOrEmpty(updateBookDto.Isbn))
+            book.Isbn = updateBookDto.Isbn;
+        book.PublicationDate = updateBookDto.PublishDate;
         _context.Books.Update(book);
         return await _context.SaveChangesAsync() > 0;
     }
@@ -78,25 +78,25 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
 
     public async Task<List<Models.Book>> GetNewBooks()
     {
-        var newBooks = await _context.Books.OrderByDescending(b => b.Book_id).Take(4).ToListAsync();
+        var newBooks = await _context.Books.OrderByDescending(b => b.BookId).Take(4).ToListAsync();
         return newBooks;
     }
 
     public async Task<PaginatedBook<Models.Book>> GetSearchedBook(string searchString, int page = 1, int pageSize = 6)
     {
         
-        var totalBooks = await _context.Books.Where(b => b.Book_Name.Contains(searchString)
+        var totalBooks = await _context.Books.Where(b => b.BookName.Contains(searchString)
                                                    || b.Author.Contains(searchString) 
-                                                   || b.ISBN.Contains(searchString)
-                                                   ||(b.Category!=null && b.Category.Category_Name.Contains(searchString))
+                                                   || b.Isbn.Contains(searchString)
+                                                   ||(b.Category!=null && b.Category.CategoryName.Contains(searchString))
                                                    || b.Publisher.Contains(searchString)).CountAsync();
         
-        var books = await _context.Books.Where(b => b.Book_Name.Contains(searchString)
+        var books = await _context.Books.Where(b => b.BookName.Contains(searchString)
                                                             || b.Author.Contains(searchString)
-                                                            || b.ISBN.Contains(searchString)
-                                                            || b.Category.Category_Name.Contains(searchString)
+                                                            || b.Isbn.Contains(searchString)
+                                                            || b.Category.CategoryName.Contains(searchString)
                                                             || b.Publisher.Contains(searchString))
-            .OrderBy(b => b.Book_Name)
+            .OrderBy(b => b.BookName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -116,7 +116,7 @@ public class BookService(ApplicationDbContext dbContext) : IBookService
         var totalBooks = await _context.Books.CountAsync();
 
         var books = await _context.Books
-            .OrderBy(b => b.Book_Name)
+            .OrderBy(b => b.BookName)
             .Skip(skip)
             .Take(pageSize)
             .ToListAsync();

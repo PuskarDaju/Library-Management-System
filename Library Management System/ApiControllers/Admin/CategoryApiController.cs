@@ -20,7 +20,7 @@ public class CategoryApiController(ICategoryService service) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateCategory dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.Category_Name))
+        if (string.IsNullOrWhiteSpace(dto.CategoryName))
         {
             return BadRequest(new
             {
@@ -30,7 +30,7 @@ public class CategoryApiController(ICategoryService service) : ControllerBase
             });
         }
 
-        if (await _service.GetCategoryByNameAsync(dto.Category_Name))
+        if (await _service.GetCategoryByNameAsync(dto.CategoryName))
             return Conflict( new
             {
                 status = "error",
@@ -78,31 +78,28 @@ public class CategoryApiController(ICategoryService service) : ControllerBase
         });
     }
 
-    public async Task<IActionResult> Update(int id, UpdateCategory dto)
+    [HttpPut]
+    public async Task<IActionResult> Update(UpdateCategory dto)
     {
-        if (await _service.GetCategoryByNameAsync(dto.Category_Name))
-        {
+        if (await _service.GetCategoryByNameAsync(dto.CategoryName))
             return Conflict(new
             {
                 status = "error",
                 message = "Category already exists"
             });
-        }
 
         if (await _service.UpdateCategoryByIdAsync(dto))
-        {
             return Ok(new
             {
                 status = "success",
                 message = "Updated Successfully"
             });
-        }
+        
         return StatusCode(500, new
         {
             status = "error",
             message = "Internal Server Error"
         });
-
     }
         
     }

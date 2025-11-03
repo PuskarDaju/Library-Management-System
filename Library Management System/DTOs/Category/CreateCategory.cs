@@ -2,5 +2,5 @@
 
 public class CreateCategory
 {
-    public string Category_Name { get; set; }
+    public string CategoryName { get; set; }
 }

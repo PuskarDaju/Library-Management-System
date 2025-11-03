@@ -14,7 +14,7 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
     {
         Models.Category category = new Models.Category
         {
-            Category_Name = dto.Category_Name,
+            CategoryName = dto.CategoryName,
         };
         await _dbContext.Category.AddAsync(category);
         return await _dbContext.SaveChangesAsync() > 0;
@@ -28,7 +28,7 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
     public async Task<bool> GetCategoryByNameAsync(string categoryName)
     {
         return await _dbContext.Category
-            .AnyAsync(c => c.Category_Name == categoryName);
+            .AnyAsync(c => c.CategoryName == categoryName);
     }
 
     public async Task<bool> DeleteCategoryByIdAsync(int categoryId)
@@ -43,9 +43,9 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
 
     public async Task<bool> UpdateCategoryByIdAsync(UpdateCategory dto)
     {
-        var category = await GetCategoryByIdAsync(dto.Category_id);
+        var category = await GetCategoryByIdAsync(dto.CategoryId);
         if(category==null) return false;
-        category.Category_Name = dto.Category_Name;
+        category.CategoryName = dto.CategoryName;
         await _dbContext.SaveChangesAsync();
         return true;
     }
