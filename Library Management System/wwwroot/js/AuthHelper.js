@@ -9,8 +9,7 @@
         const res = await fetch('/api/security/csrf-token', {
             credentials: 'include'  // include cookies
         });
-        const csrfToken = await getCookie('XSRF-TOKEN');
-        return csrfToken;
+        return await getCookie('XSRF-TOKEN');
     } catch (err) {
         console.error("Failed to fetch CSRF token", err);
         return null;

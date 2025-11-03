@@ -29,14 +29,14 @@ ViewData["Title"] = "Add Book";
                         <!-- Publisher -->
                         <div class="mb-3">
                             <label for="Publisher" class="form-label">Publisher</label>
-                            <input type="text" class="form-control" value="laado" id="Publisher" name="publisher" placeholder="Enter publisher" />
+                            <input type="text" class="form-control" id="Publisher" name="publisher" placeholder="Enter publisher" />
                             <span class="text-danger small" id="PublisherError"></span>
                         </div>
 
                         <!-- ISBN -->
                         <div class="mb-3">
                             <label for="ISBN" class="form-label">ISBN</label>
-                            <input type="text" class="form-control" value="123" id="ISBN" name="isbn" placeholder="Enter ISBN number" />
+                            <input type="text" class="form-control" id="ISBN" name="isbn" placeholder="Enter ISBN number" />
                             <span class="text-danger small" id="ISBNError"></span>
                         </div>
 
@@ -47,7 +47,7 @@ ViewData["Title"] = "Add Book";
                                 <option value="">Select a category</option>
                                 @foreach (var category in Model)
                                 {
-                                    <option value="@category.CategoryId" selected="selected">@category.CategoryName</option>
+                                    <option value="@category.CategoryId">@category.CategoryName</option>
                                 }
                                 
                             </select>
@@ -57,21 +57,21 @@ ViewData["Title"] = "Add Book";
                         <!-- Price -->
                         <div class="mb-3">
                             <label for="Price" class="form-label">Price</label>
-                            <input type="number" step="0.01"  value="1200" class="form-control" id="Price" name="price" placeholder="Enter price" required />
+                            <input type="number" step="0.01" class="form-control" id="Price" name="price" placeholder="Enter price" required />
                             <span class="text-danger small" id="PriceError"></span>
                         </div>
 
                         <!-- Publication Date -->
                         <div class="mb-3">
                             <label for="PublicationDate" class="form-label">Publication Date</label>
-                            <input type="date" class="form-control" id="PublicationDate" value="12/10/1990" name="publication_date" />
+                            <input type="date" class="form-control" id="PublicationDate" name="publication_date" />
                             <span class="text-danger small" id="PublicationDateError"></span>
                         </div>
 
                         <!-- Quantity -->
                         <div class="mb-3">
                             <label for="Quantity" class="form-label">Quantity</label>
-                            <input type="number" value="10" class="form-control" id="Quantity" name="quantity" placeholder="Enter available quantity" min="1" />
+                            <input type="number" class="form-control" id="Quantity" name="quantity" placeholder="Enter available quantity" min="1" />
                             <span class="text-danger small" id="QuantityError"></span>
                         </div>
                         
