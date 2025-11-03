@@ -2,6 +2,7 @@
 using Library_Management_System.Services.Admin.Exception;
 using Microsoft.AspNetCore.Mvc;
 using Library_Management_System.Services.Admin.User;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Library_Management_System.ApiControllers.Admin;
@@ -80,6 +81,7 @@ public class UserApiController(IUserControlService userControlService):Controlle
     }
     [HttpPatch("blacklist/{id}")]
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> BlackListUser(int id)
     {
         if (id <1)

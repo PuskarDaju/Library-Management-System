@@ -46,6 +46,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         }
     };
 });
+//making security strict for the form by including csrf for preventing xss.
+
+builder.Services.AddAntiforgery(options=>options.HeaderName = "X-CSRF-TOKEN"); 
 
 builder.Services.AddAuthorization(); //it comes first for using [authorize]
 var app = builder.Build();

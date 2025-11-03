@@ -8,8 +8,6 @@ namespace Library_Management_System.Controllers.Admin;
 [Authorize (Roles = "Admin")]
 public class BookController(ApplicationDbContext dbContext):Controller
 {
-
-    
     public async Task<IActionResult> Index()
     {
         ViewBag.ActiveMenu="Book";

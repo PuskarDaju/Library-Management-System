@@ -1,11 +1,11 @@
-﻿
-using Library_Management_System.Services.Admin.Book;
+﻿using Library_Management_System.Services.Admin.Book;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace Library_Management_System.Controllers.Student;
 
 [Route("Student")]
+[Authorize(Roles = "Student")]
 public class StudentController(IBookService service):Controller
 {
     private readonly IBookService _service=service ?? throw new ArgumentNullException(nameof(service));

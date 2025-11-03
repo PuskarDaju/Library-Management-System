@@ -1,10 +1,11 @@
 using Library_Management_System.Data;
 using Library_Management_System.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library_Management_System.Controllers.Admin;
-
+[Authorize(Roles = "Admin")]
 public class UserController(ApplicationDbContext context):Controller
 {
     private readonly ApplicationDbContext _context=context;
