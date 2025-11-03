@@ -14,8 +14,8 @@ public class BookRequest
     [Required]
     public int BookId { get; set; }
 
-   [ForeignKey("Book_id")]
+   [ForeignKey("BookId")]
    public Book Book { get; set; }
-   [ForeignKey("User_id")]
+   [ForeignKey("UserId")]
    public User User{ get; set; }
 }
