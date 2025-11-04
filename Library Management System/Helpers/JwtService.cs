@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Library_Management_System.Helpers;
 
-public class JwtService(IConfiguration config)
+public class JwtService(IConfiguration config,IHttpContextAccessor contextAccessor)
 {
     /// <summary>
     /// Creates a signed JSON Web Token containing the subject and role claims using JWT settings from configuration.
@@ -46,4 +46,5 @@ public class JwtService(IConfiguration config)
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    
 }

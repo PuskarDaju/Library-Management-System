@@ -7,10 +7,20 @@ public class Book
 {
     [Key,Required]
     public int BookId { get; set; }
-    public string BookName { get; set; }
-    public string Author { get; set; }
-    public string Publisher { get; set; }
-    public string Isbn { get; set; }
+    [Required]
+    [StringLength(40)]
+    public required string BookName { get; set; }
+    [Required]
+    [StringLength(40)]
+    public required string Author { get; set; }
+    [Required]
+    [StringLength(40)]
+    public required string Publisher { get; set; }
+    [Required]
+    [StringLength(40)]
+    public required string Isbn { get; set; }
+  
+    [StringLength(255)]
     public string? ImageUrl { get; set; }
     public int CategoryId { get; set; }
     public float Price { get; set; }
@@ -19,7 +29,6 @@ public class Book
     
     //relations
     //one book belongs to one category
-    [ForeignKey("CategoryId")]
-    public Category Category { get; set; }
+    [ForeignKey("CategoryId")] public Category? Category { get; set; }
 }
 

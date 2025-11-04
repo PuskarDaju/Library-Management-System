@@ -7,15 +7,17 @@ public class BookRequest
 {
     [Key]
     public int BookRequestId { get; set; }
+
     [Required]
-    public string RequestType { get; set; }
+    [StringLength(20)]
+    public required string RequestType { get; set; }
     [Required]
     public int UserId { get; set; }
     [Required]
     public int BookId { get; set; }
 
    [ForeignKey("BookId")]
-   public Book Book { get; set; }
+   public Book? Book { get; set; }
    [ForeignKey("UserId")]
-   public User User{ get; set; }
+   public User? User{ get; set; }
 }

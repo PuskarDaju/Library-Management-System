@@ -1,4 +1,4 @@
-using Library_Management_System.Data;
+﻿using Library_Management_System.Data;
 using Library_Management_System.DTOs.User;
 using Library_Management_System.Enum;
 using Library_Management_System.Helpers;
@@ -59,7 +59,7 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
     /// </summary>
     /// <param name="loginDto">The user's login credentials (email and password).</param>
     /// <returns>A <see cref="UserResponseDto"/> containing the user's Id, FullName, Email, and Role when credentials are valid; `null` if the user is not found or the password is incorrect.</returns>
-    public async Task<UserResponseDto> LoginAsync(LoginDto loginDto)
+    public async Task<UserResponseDto?> LoginAsync(LoginDto loginDto)
     {
        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
         if (user == null)

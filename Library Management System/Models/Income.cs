@@ -9,7 +9,8 @@ public class Income
     [Key]
     public int IncomeId { get; set; }
     [Required]
-    public string Type { get; set; }
+    [StringLength(25)]
+    public required string Type { get; set; }
     [Required]
     public int BookId { get; set; }
     [Required]
@@ -21,9 +22,9 @@ public class Income
     public int? FineId { get; set; }
     
     [ForeignKey("BookId")]
-    public Book Book { get; set; }
+    public Book? Book { get; set; }
     [ForeignKey("UserId")]
-    public User User { get; set; }
+    public User? User { get; set; }
     [ForeignKey("FineId")]
-    public Fine Fine { get; set; }
+    public Fine? Fine { get; set; }
 }

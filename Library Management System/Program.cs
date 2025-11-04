@@ -51,6 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddAntiforgery(options=>options.HeaderName = "X-CSRF-TOKEN"); 
 
 builder.Services.AddAuthorization(); //it comes first for using [authorize]
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {

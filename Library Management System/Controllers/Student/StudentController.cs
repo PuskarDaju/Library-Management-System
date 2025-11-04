@@ -16,28 +16,28 @@ public class StudentController(IBookService service):Controller
         return View("Index",newBooks);
     }
     [Route("Requests")]
-    public async Task<IActionResult> Requests()
+    public IActionResult Requests()
     {
         ViewData["ActiveMenu"] = "Requests";
         return View("Requests");  
     }
 
     [Route("Rentals")]
-    public async Task<IActionResult> Rentals()
+    public IActionResult Rentals()
     {
         ViewData["ActiveMenu"] = "Rentals";
         return View("Rentals");
     }
 
     [Route("History")]
-    public async Task<IActionResult> History()
+    public IActionResult History()
     {
         ViewData["ActiveMenu"] = "History";
         return View("History");  
     }
     
     [Route("Profile")]
-    public async Task<IActionResult> Profile()
+    public IActionResult Profile()
     {
         ViewData["ActiveMenu"] = "Profile";
         return View("Profile/Index");  

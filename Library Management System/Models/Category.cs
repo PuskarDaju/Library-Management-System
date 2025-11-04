@@ -6,6 +6,8 @@ public class Category
 {
     [Key]
     public int CategoryId { get; set; }
+    [Required]
+    [StringLength(50)]
     public required string CategoryName { get; set; }
     
     //relations

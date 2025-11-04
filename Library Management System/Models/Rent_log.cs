@@ -10,9 +10,10 @@ public class RentLog
     [Required]
     public int IncomeId { get; set; }
     [Required]
-    public string Status { get; set; }
+    [StringLength(50)]
+    public required string Status { get; set; }
     
     [ForeignKey("IncomeId")]
-    public Income Income { get; set; }
+    public Income? Income { get; set; }
     
 }

@@ -14,5 +14,7 @@ public interface IBookService
     Task<PaginatedBook<Models.Book>> GetSearchedBook(string searchString,int page=1,int pageSize=6);
     
     Task<PaginatedBook<Models.Book>> GetPaginatedBooks(int page=1,int pageSize=6);
+    
+    Task<bool> DecreaseBookQuantity(int id);
 
 }

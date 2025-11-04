@@ -2,6 +2,6 @@
 
 public class EditBookView
 {
-    public Book Book { get; set; }
-    public List<Category> Categories { get; set; }
+    public required Book Book { get; set; }
+    public required List<Category> Categories { get; set; }
 }
