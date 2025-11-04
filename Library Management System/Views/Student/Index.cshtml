@@ -54,12 +54,12 @@
     // Normalize book object
     function normalizeBook(book) {
         return {
-            Book_id: book.Book_id || book.book_id,
-            Book_Name: book.Book_Name || book.book_Name,
+            Book_id: book.BookId || book.bookId,
+            Book_Name: book.BookName || book.bookName,
             Author: book.Author || book.author,
             Publisher: book.Publisher || book.publisher,
             Price: book.Price || book.price,
-            Image_Url: book.Image_Url || book.image_Url
+            Image_Url: book.ImageUrl || book.imageUrl
         };
     }
 
@@ -105,7 +105,8 @@
             const response = await fetch(term
                 ? `/api/student/search?searchTerm=${encodeURIComponent(term)}&page=${page}`
                 : `/api/Student/paginated?page=${page}&size=6`);
-            if (!response.ok) throw new Error('Network error');
+            if (!response.ok) 
+                console.log('Network error');
 
             const data = await response.json();
             const items =data.items;
@@ -162,15 +163,24 @@
 });
     
     //creating function for rent or purchase book
-    async function makeRequest(requestWithType){
-        var response = await fetch();
+    async function makeRequest(bookId, requestType){
+        const response=await secureFetch(`/api/student/request`,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+               "BookId": bookId,
+                "RequestType":requestType
+            }),
+        });
+       if(response.ok){
+           Swal.fire("Success", "Request sent successfully", "success");
+       }
     }
     function rentBook(id) {
-        //here comes the real problem the user id must be fetched from the jwt 
-        //book id is sent so we have to change all contoller and service of this process along with the dtos 
-        //you are very studpid programmer without system design logic
-        
-        
+        const requestType = "Rent";
+        makeRequest(id,requestType);
     }
     function buyBook(id) {}
     

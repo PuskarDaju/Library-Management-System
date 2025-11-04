@@ -1,15 +1,22 @@
+using System.IdentityModel.Tokens.Jwt;
 using Library_Management_System.DTOs.Rent;
 using Library_Management_System.Enum;
 using Library_Management_System.Services.Student;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management_System.ApiControllers.Student;
 
+[ApiController]
+[Authorize(Roles = UserRoleEnum.Student)]
+[Route("api/student")]
 public class RentRequestController(IRentService service):ControllerBase
 {
+    [HttpPost("request")]
     public async Task<IActionResult> Index(RentRequest request)
     {
-        var userId=User.FindFirst("userID")?.Value;
+        var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+
         if (userId == null)
         {
             return Unauthorized(new
